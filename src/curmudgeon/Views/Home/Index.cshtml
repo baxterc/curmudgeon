@@ -1,16 +1,13 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@model curmudgeon.ViewModels.LoginViewModel
 @{
+    ViewData["Title"] = "Curmudgeon: The sharing platform for reclusive luddites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@model curmudgeon.ViewModels.LoginViewModel
 
-<html>
-<head>
-    <title>Curmudgeon: The sharing platform for reclusive luddites</title>
-</head>
-<body>
     <h2>Curmudgeon!</h2>
     @Html.ActionLink("Create an Account", "Register", "Users")
 <br/>
@@ -24,5 +21,3 @@
 
     <input type="submit" value="Log in" class="btn btn-default" />
 }
-</body>
-</html>
