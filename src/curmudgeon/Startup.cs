@@ -45,6 +45,21 @@ namespace curmudgeon
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            
+            app.UseIdentity();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "blogs",
+                    template: "blogs/{username?}",
+                    defaults: new { controller = "Users", action = "Index" });
+                    
+            });
+
             loggerFactory.AddConsole();
 
             if (env.IsDevelopment())
@@ -52,13 +67,6 @@ namespace curmudgeon
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseIdentity();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
 
             app.Run(async (context) =>
             {

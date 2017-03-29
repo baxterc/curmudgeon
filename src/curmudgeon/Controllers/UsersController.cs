@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using curmudgeon.Models;
+using Microsoft.AspNetCore.Identity;
 using curmudgeon.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace curmudgeon.Controllers
 {
-    public class HomeController : Controller
+    public class UsersController : Controller
     {
+
         private readonly CurmudgeonDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public HomeController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, CurmudgeonDbContext db)
+        public UsersController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, CurmudgeonDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -25,18 +26,25 @@ namespace curmudgeon.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(string username)
+        {
+            var model = username;
+            return View("Index", username);
+        }
+
+        public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(LoginViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: true, lockoutOnFailure: false);
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Nickname = model.Nickname, DisplayName = model.DisplayName};
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             else
             {
@@ -44,9 +52,5 @@ namespace curmudgeon.Controllers
             }
         }
 
-        public IActionResult Users(string username)
-        {
-            return View(username);
-        }
     }
 }

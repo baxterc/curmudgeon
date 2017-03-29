@@ -1,0 +1,27 @@
+﻿@{
+
+}
+
+@model curmudgeon.ViewModels.RegisterViewModel
+
+<h3>Create your account</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.LabelFor(model => model.Email)
+    @Html.TextBoxFor(model => model.Email, new { type = "email" })
+    <br />
+    @Html.LabelFor(model => model.Nickname)
+    @Html.TextBoxFor(model => model.Nickname)
+    <br />
+    @Html.LabelFor(model => model.DisplayName)
+    @Html.TextBoxFor(model => model.DisplayName)
+    <br />
+    @Html.LabelFor(model => model.Password)
+    @Html.PasswordFor(model => model.Password)
+    <br />
+    @Html.LabelFor(model => model.ConfirmPassword)
+    @Html.PasswordFor(model => model.ConfirmPassword)
+    <br />
+    <input type="submit" value="Get Started!" />
+}

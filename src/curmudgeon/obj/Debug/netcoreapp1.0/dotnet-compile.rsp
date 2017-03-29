@@ -1,5 +1,5 @@
---temp-output:C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\obj\Debug\netcoreapp1.0\
---out:C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\bin\Debug\netcoreapp1.0\curmudgeon.dll
+--temp-output:C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\obj\Debug\netcoreapp1.0\
+--out:C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\bin\Debug\netcoreapp1.0\curmudgeon.dll
 --define:DEBUG
 --define:TRACE
 --define:NETCOREAPP1_0
@@ -182,26 +182,29 @@
 --reference:C:\Users\Charlie\.nuget\packages\System.Threading.Timer\4.0.1\ref\netstandard1.2\System.Threading.Timer.dll
 --reference:C:\Users\Charlie\.nuget\packages\System.Xml.ReaderWriter\4.0.11\ref\netstandard1.3\System.Xml.ReaderWriter.dll
 --reference:C:\Users\Charlie\.nuget\packages\System.Xml.XDocument\4.0.11\ref\netstandard1.3\System.Xml.XDocument.dll
---resource:"C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\obj\Debug\netcoreapp1.0\curmudgeondotnet-compile.deps.json",curmudgeon.deps.json
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Program.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Startup.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Controllers\HomeController.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324044831_init.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324044831_init.Designer.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324045340_comments.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324045340_comments.Designer.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324052359_posttag.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324052359_posttag.Designer.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324052555_posttagFixed.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324052555_posttagFixed.Designer.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324055413_followers.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324055413_followers.Designer.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324055503_following.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\20170324055503_following.Designer.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Migrations\CurmudgeonDbContextModelSnapshot.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Models\ApplicationUser.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Models\Comment.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Models\CurmudgeonDbContext.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Models\Post.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Models\PostTag.cs
-C:\Users\Charlie\Documents\Visual Studio 2015\Projects\curmudgeon\src\curmudgeon\Models\Tag.cs
+--resource:"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\obj\Debug\netcoreapp1.0\curmudgeondotnet-compile.deps.json",curmudgeon.deps.json
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Program.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Startup.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Controllers\HomeController.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Controllers\UsersController.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324044831_init.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324044831_init.Designer.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324045340_comments.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324045340_comments.Designer.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324052359_posttag.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324052359_posttag.Designer.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324052555_posttagFixed.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324052555_posttagFixed.Designer.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324055413_followers.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324055413_followers.Designer.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324055503_following.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324055503_following.Designer.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\CurmudgeonDbContextModelSnapshot.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\ApplicationUser.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Comment.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\CurmudgeonDbContext.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Post.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\PostTag.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Tag.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\LoginViewModel.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\RegisterViewModel.cs
