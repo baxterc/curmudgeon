@@ -1,0 +1,17 @@
+﻿
+@model curmudgeon.Models.Post
+@{
+    ViewData["Title"] = "Curmudgeon - Write a New Post";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Write a New Post</h2>
+
+@using (Html.BeginForm()){ 
+    @Html.LabelFor(p => p.Title)
+    @Html.TextBoxFor(p => p.Title)
+    <br />
+    @Html.TextBoxFor(p => p.Content)
+    
+<input type="submit" value="Publish" class="btn btn-default" />
+}

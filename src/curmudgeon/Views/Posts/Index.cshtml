@@ -1,5 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<curmudgeon.Models.Post>
 @{
+    ViewData["Title"] = "Your Posts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<h2>Your Posts</h2>
+<ul>
+    @foreach (var post in Model)
+    {
+        <li>@Html.ActionLink(post.Title, "Read", new { id = post.PostId }) | @Html.ActionLink("Edit", "Edit", new { id = post.PostId }) | @Html.ActionLink("Delete", "Delete", new {id = post.PostId }) </li>
+    }
+</ul>
+
+@Html.ActionLink("Write a New Post", "Write", "Posts")<br />

@@ -15,7 +15,7 @@ namespace curmudgeon.Models
         [Key]
         public int TagId { get; set; }
         public string Title { get; set; }
-        public List<PostTag> PostTags { get; set; }
+        public virtual List<PostTag> PostTags { get; set; }
 
     }
 }

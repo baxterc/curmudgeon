@@ -15,12 +15,12 @@ namespace curmudgeon.Models
         public string Nickname { get; set; }
         public string DisplayName { get; set; }
         
-        public ICollection<Post> UserPosts { get; set; }
-        public ICollection<Comment> UserComments { get; set; }
+        public virtual ICollection<Post> UserPosts { get; set; }
+        public virtual ICollection<Comment> UserComments { get; set; }
         [InverseProperty("Follower")]
-        public ICollection<UserFollow> Followers { get; set; }
+        public virtual ICollection<UserFollow> Followers { get; set; }
         [InverseProperty("User")]
-        public ICollection<UserFollow> Following { get; set; }
+        public virtual ICollection<UserFollow> Following { get; set; }
         
     }
 

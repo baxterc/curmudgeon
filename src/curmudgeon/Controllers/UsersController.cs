@@ -28,7 +28,8 @@ namespace curmudgeon.Controllers
         // GET: /<controller>/
         public IActionResult Index(string username)
         {
-            var model = username;
+            var user = _db.Users.Where(u => u.Nickname == username);
+            
             return View("Index", username);
         }
 

@@ -196,6 +196,8 @@
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324055413_followers.Designer.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324055503_following.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170324055503_following.Designer.cs"
+"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170331181058_virtual.cs"
+"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170331181058_virtual.Designer.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\CurmudgeonDbContextModelSnapshot.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\ApplicationUser.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Comment.cs"
