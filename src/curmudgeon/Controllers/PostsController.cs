@@ -33,9 +33,9 @@ namespace curmudgeon.Controllers
             return View(posts);
         }
 
-        public IActionResult Read(int postId)
+        public IActionResult Read(int id)
         {
-            var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == postId);
+            var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
             return View(thisPost);
         }
 
