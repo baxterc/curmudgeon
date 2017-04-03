@@ -43,10 +43,5 @@ namespace curmudgeon.Controllers
                 return View();
             }
         }
-
-        public IActionResult Users(string username)
-        {
-            return View(username);
-        }
     }
 }

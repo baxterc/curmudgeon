@@ -59,7 +59,6 @@ namespace curmudgeon.Controllers
         public IActionResult Edit(int id)
         {
             var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
-
             return View(thisPost);
         }
 

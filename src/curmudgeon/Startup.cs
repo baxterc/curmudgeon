@@ -52,12 +52,6 @@ namespace curmudgeon
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapRoute(
-                    name: "blogs",
-                    template: "blogs/{username?}",
-                    defaults: new { controller = "Users", action = "Index" });
-                    
             });
 
             loggerFactory.AddConsole();

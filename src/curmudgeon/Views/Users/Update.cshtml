@@ -1,0 +1,16 @@
+﻿@model curmudgeon.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Curmudgeon - Update Your Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Update Your Profile</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.LabelFor(u => u.DisplayName)
+    @Html.TextBoxFor(u => u.DisplayName)
+    <br />
+
+    <input type="submit" value="Update" class="btn btn-default" />
+}

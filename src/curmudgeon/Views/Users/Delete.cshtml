@@ -1,0 +1,15 @@
+﻿@model curmudgeon.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Curmudgeon - Delete Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Are you sure you want to delete your account?</h2>
+
+<p>@Model.DisplayName</p>
+@using (Html.BeginForm())
+{
+    <input type="submit" value="Delete" class="btn btn-default" />
+
+    <input type="button" value="Cancel" onclick="location.href='/'" />
+}

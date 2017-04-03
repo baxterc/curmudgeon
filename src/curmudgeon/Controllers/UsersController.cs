@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using curmudgeon.Models;
 using Microsoft.AspNetCore.Identity;
 using curmudgeon.ViewModels;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,11 +28,9 @@ namespace curmudgeon.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index(string username)
+        public IActionResult Index()
         {
-            var user = _db.Users.Where(u => u.Nickname == username);
-            
-            return View("Index", username);
+            return RedirectToAction("Info");
         }
 
         public IActionResult Register()
@@ -53,7 +53,76 @@ namespace curmudgeon.Controllers
             }
         }
 
+        public async Task<IActionResult> Info(string id)
+        {
+            // this needs to use a ViewModel instead of an entire User object.
+            if (id == null)
+            {
+                var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var thisUser = await _userManager.FindByIdAsync(userId);
+                return View(thisUser);
+            }
+            else
+            {
+                var thisUser = _db.Users.FirstOrDefault(u => u.Nickname == id);
+                return View(thisUser);
+            }   
+        }
+
+        public async Task<IActionResult> Update()
+        {
+            // needs a ViewModel
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            return View(thisUser);
+        }
+
+        [HttpPost]
+        //needs to take a ViewModel version of the user as a parameter.
         
+        public async Task<IActionResult> Update(ApplicationUser model)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            var result = await _userManager.UpdateAsync(model);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return View();
+            }
+            //needs to redirect to a home page of some sorts
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> Delete()
+        {
+            // needs a ViewModel
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            return View(thisUser);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed()
+        {
+            
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            var result = await _userManager.DeleteAsync(thisUser);
+            await _signInManager.SignOutAsync();
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
