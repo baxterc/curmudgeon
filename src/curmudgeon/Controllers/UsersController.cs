@@ -59,12 +59,14 @@ namespace curmudgeon.Controllers
             if (id == null)
             {
                 var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var thisUser = await _userManager.FindByIdAsync(userId);
+                var thisUser = _db.Users.Where(u => u.Id == userId).Include(u => u.UserPosts).FirstOrDefault();
+                //var thisUser = await _userManager.FindByIdAsync(userId);
                 return View(thisUser);
             }
             else
             {
-                var thisUser = _db.Users.FirstOrDefault(u => u.Nickname == id);
+                var thisUser = _db.Users.Where(u => u.Nickname == id).Include(u => u.UserPosts).FirstOrDefault();
+               
                 return View(thisUser);
             }   
         }
