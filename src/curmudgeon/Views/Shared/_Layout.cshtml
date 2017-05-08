@@ -8,7 +8,7 @@
 <body>
     <nav>
         @if (User.Identity.IsAuthenticated)
-        {@Html.ActionLink("Log Out", "LogOff", "Users")}
+        {@Html.ActionLink("Log Out", "LogOff", "Users")} | <a href="~/Posts">View your Posts</a>
     </nav>
     <div>
         @RenderBody()

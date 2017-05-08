@@ -74,9 +74,13 @@ namespace curmudgeon.Migrations
                     b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CommentDate");
+
+                    b.Property<int>("CommentPostId");
+
                     b.Property<string>("Content");
 
-                    b.Property<int>("PostId");
+                    b.Property<int?>("ParentCommentId");
 
                     b.Property<string>("Title");
 
@@ -84,7 +88,9 @@ namespace curmudgeon.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("CommentPostId");
+
+                    b.HasIndex("ParentCommentId");
 
                     b.HasIndex("UserId");
 
@@ -269,9 +275,13 @@ namespace curmudgeon.Migrations
             modelBuilder.Entity("curmudgeon.Models.Comment", b =>
                 {
                     b.HasOne("curmudgeon.Models.Post", "CommentPost")
-                        .WithMany("PostComments")
-                        .HasForeignKey("PostId")
+                        .WithMany("Comments")
+                        .HasForeignKey("CommentPostId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("curmudgeon.Models.Comment", "ParentComment")
+                        .WithMany("ChildComments")
+                        .HasForeignKey("ParentCommentId");
 
                     b.HasOne("curmudgeon.Models.ApplicationUser", "User")
                         .WithMany("UserComments")

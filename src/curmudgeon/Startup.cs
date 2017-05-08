@@ -31,12 +31,18 @@ namespace curmudgeon
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession(o =>
+            {
+                o.IdleTimeout = TimeSpan.FromSeconds(3600);
+            });
+
+
             services.AddMvc();
 
             services.AddEntityFramework()
                 .AddDbContext<CurmudgeonDbContext>(options =>
                     options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
-
+                    
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<CurmudgeonDbContext>()
                 .AddDefaultTokenProviders();
@@ -45,7 +51,10 @@ namespace curmudgeon
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole();
             
+            app.UseSession();
+            app.UseStaticFiles();
             app.UseIdentity();
             app.UseMvc(routes =>
             {
@@ -54,13 +63,10 @@ namespace curmudgeon
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            loggerFactory.AddConsole();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
 
             app.Run(async (context) =>
             {

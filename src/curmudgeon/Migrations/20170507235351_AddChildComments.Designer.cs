@@ -8,8 +8,8 @@ using curmudgeon.Models;
 namespace curmudgeon.Migrations
 {
     [DbContext(typeof(CurmudgeonDbContext))]
-    [Migration("20170324052359_posttag")]
-    partial class posttag
+    [Migration("20170507235351_AddChildComments")]
+    partial class AddChildComments
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -75,9 +75,13 @@ namespace curmudgeon.Migrations
                     b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CommentDate");
+
+                    b.Property<int>("CommentPostId");
+
                     b.Property<string>("Content");
 
-                    b.Property<int>("PostId");
+                    b.Property<int?>("ParentCommentId");
 
                     b.Property<string>("Title");
 
@@ -85,7 +89,9 @@ namespace curmudgeon.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("CommentPostId");
+
+                    b.HasIndex("ParentCommentId");
 
                     b.HasIndex("UserId");
 
@@ -119,15 +125,13 @@ namespace curmudgeon.Migrations
 
                     b.Property<int>("PostId");
 
-                    b.Property<string>("TagId");
-
-                    b.Property<int?>("TagId1");
+                    b.Property<int>("TagId");
 
                     b.HasKey("PostTagId");
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("TagId1");
+                    b.HasIndex("TagId");
 
                     b.ToTable("PostTag");
                 });
@@ -142,6 +146,24 @@ namespace curmudgeon.Migrations
                     b.HasKey("TagId");
 
                     b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("curmudgeon.Models.UserFollow", b =>
+                {
+                    b.Property<int>("UserFollowId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("FollowerId");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("UserFollowId");
+
+                    b.HasIndex("FollowerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserFollow");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
@@ -254,9 +276,13 @@ namespace curmudgeon.Migrations
             modelBuilder.Entity("curmudgeon.Models.Comment", b =>
                 {
                     b.HasOne("curmudgeon.Models.Post", "CommentPost")
-                        .WithMany("PostComments")
-                        .HasForeignKey("PostId")
+                        .WithMany("Comments")
+                        .HasForeignKey("CommentPostId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("curmudgeon.Models.Comment", "ParentComment")
+                        .WithMany("ChildComments")
+                        .HasForeignKey("ParentCommentId");
 
                     b.HasOne("curmudgeon.Models.ApplicationUser", "User")
                         .WithMany("UserComments")
@@ -279,7 +305,19 @@ namespace curmudgeon.Migrations
 
                     b.HasOne("curmudgeon.Models.Tag", "Tag")
                         .WithMany("PostTags")
-                        .HasForeignKey("TagId1");
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("curmudgeon.Models.UserFollow", b =>
+                {
+                    b.HasOne("curmudgeon.Models.ApplicationUser", "Follower")
+                        .WithMany("Followers")
+                        .HasForeignKey("FollowerId");
+
+                    b.HasOne("curmudgeon.Models.ApplicationUser", "User")
+                        .WithMany("Following")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>

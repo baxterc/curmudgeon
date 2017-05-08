@@ -14,10 +14,17 @@ namespace curmudgeon.Models
         public int CommentId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public int PostId { get; set; }
         public virtual Post CommentPost { get; set; }
+
+        [ForeignKey("CommentPost")]
+        public int CommentPostId { get; set; }
+        public DateTime CommentDate { get; set; }
         public virtual ApplicationUser User { get; set; }
-        
+        public int? ParentCommentId { get; set; }
+        [ForeignKey("ParentCommentId")]
+        public virtual Comment ParentComment { get; set; }
+        public virtual ICollection<Comment> ChildComments { get; set; }
+
         
     }
 }

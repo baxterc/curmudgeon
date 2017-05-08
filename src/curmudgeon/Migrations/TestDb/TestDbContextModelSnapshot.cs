@@ -5,13 +5,12 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using curmudgeon.Models;
 
-namespace curmudgeon.Migrations
+namespace curmudgeon.Migrations.TestDb
 {
-    [DbContext(typeof(CurmudgeonDbContext))]
-    [Migration("20170324055413_followers")]
-    partial class followers
+    [DbContext(typeof(TestDbContext))]
+    partial class TestDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -76,6 +75,10 @@ namespace curmudgeon.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Content");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<int>("ParentCommentId");
 
                     b.Property<int>("PostId");
 
@@ -306,7 +309,7 @@ namespace curmudgeon.Migrations
                         .HasForeignKey("FollowerId");
 
                     b.HasOne("curmudgeon.Models.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Following")
                         .HasForeignKey("UserId");
                 });
 

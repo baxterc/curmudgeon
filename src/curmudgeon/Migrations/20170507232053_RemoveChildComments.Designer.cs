@@ -8,8 +8,8 @@ using curmudgeon.Models;
 namespace curmudgeon.Migrations
 {
     [DbContext(typeof(CurmudgeonDbContext))]
-    [Migration("20170331181058_virtual")]
-    partial class @virtual
+    [Migration("20170507232053_RemoveChildComments")]
+    partial class RemoveChildComments
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -75,9 +75,13 @@ namespace curmudgeon.Migrations
                     b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CommentDate");
+
+                    b.Property<int>("CommentPostId");
+
                     b.Property<string>("Content");
 
-                    b.Property<int>("PostId");
+                    b.Property<int>("ParentCommentId");
 
                     b.Property<string>("Title");
 
@@ -85,7 +89,7 @@ namespace curmudgeon.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("CommentPostId");
 
                     b.HasIndex("UserId");
 
@@ -270,8 +274,8 @@ namespace curmudgeon.Migrations
             modelBuilder.Entity("curmudgeon.Models.Comment", b =>
                 {
                     b.HasOne("curmudgeon.Models.Post", "CommentPost")
-                        .WithMany("PostComments")
-                        .HasForeignKey("PostId")
+                        .WithMany("Comments")
+                        .HasForeignKey("CommentPostId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("curmudgeon.Models.ApplicationUser", "User")

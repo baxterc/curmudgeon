@@ -27,6 +27,7 @@ namespace curmudgeon.Controllers
         
         public async Task<IActionResult> Index()
         {
+
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
             var posts = _db.Posts.Where(p => p.Account == thisUser);
@@ -35,7 +36,12 @@ namespace curmudgeon.Controllers
 
         public IActionResult Read(int id)
         {
-            var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
+            var thisPost = _db.Posts
+                .Where(p => p.PostId == id)
+                .Include(p => p.Comments)
+                .FirstOrDefault();
+            //var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
+                //Include(p => p.Comments).FirstOrDefault();
             return View(thisPost);
         }
 

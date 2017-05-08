@@ -6,3 +6,14 @@
 
 <h3>@Model.Title</h3>
 <div>@Model.Content</div>
+
+<ul id="post_comments">
+    @foreach (var comment in Model.Comments)
+    {
+        <li>@Html.ActionLink(comment.Title, "Details", "Comments", new {id = comment.CommentId })</li>
+    }
+</ul>
+
+@Html.ActionLink("Add a Comment", "Write", "Comments", new { id = Model.PostId})
+
+@Html.ActionLink("Return to Posts", "Index")

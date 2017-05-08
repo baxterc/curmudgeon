@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using curmudgeon.Models;
 
-namespace curmudgeon.Migrations
+namespace curmudgeon.Migrations.TestDb
 {
-    [DbContext(typeof(CurmudgeonDbContext))]
-    [Migration("20170324055503_following")]
-    partial class following
+    [DbContext(typeof(TestDbContext))]
+    [Migration("20170407185229_TestDB")]
+    partial class TestDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -76,6 +76,10 @@ namespace curmudgeon.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Content");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<int>("ParentCommentId");
 
                     b.Property<int>("PostId");
 

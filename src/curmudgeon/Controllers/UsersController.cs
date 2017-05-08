@@ -93,8 +93,6 @@ namespace curmudgeon.Controllers
             {
                 return View();
             }
-            //needs to redirect to a home page of some sorts
-            return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Delete()

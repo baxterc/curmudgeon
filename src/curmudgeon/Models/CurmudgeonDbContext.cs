@@ -9,9 +9,19 @@ namespace curmudgeon.Models
 {
     public class CurmudgeonDbContext : IdentityDbContext <ApplicationUser>
     {
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<Tag> Tags { get; set; }
+        public CurmudgeonDbContext()
+        {
+
+        }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=CurmudgeonDb;integrated security = True");
+        }
+
         public CurmudgeonDbContext(DbContextOptions options) : base(options)
         {
            

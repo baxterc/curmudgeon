@@ -1,0 +1,13 @@
+﻿@model IEnumerable<curmudgeon.Models.Comment>
+@{
+    ViewData["Title"] = "Your Comments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Your Posts</h2>
+<ul>
+    @foreach (var comment in Model)
+    {
+        <li>@Html.ActionLink(comment.Title, "Read", new { id = comment.CommentId }) | @Html.ActionLink("Edit", "Edit", new { id = comment.CommentId }) | @Html.ActionLink("Delete", "Delete", new { id = comment.CommentId }) </li>
+    }
+</ul>

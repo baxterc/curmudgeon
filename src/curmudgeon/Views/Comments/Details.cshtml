@@ -1,0 +1,12 @@
+﻿@model curmudgeon.Models.Comment
+@{
+    ViewData["Title"] = "Curmudgeon";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>@Model.Title</h3>
+<div>@Model.Content</div>
+
+<div>
+    @Html.ActionLink("Back to main entry", "Read", "Posts", new { id = Model.CommentPostId })
+</div>
