@@ -16,6 +16,7 @@ namespace curmudgeon.Models
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<PostTag> PostTags { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

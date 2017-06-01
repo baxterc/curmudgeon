@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace curmudgeon.Models
 {
+    [Table("PostTags")]
     public class PostTag
     {
         [Key]
         public int PostTagId { get; set; }
+
         [ForeignKey("PostId")]
         public int PostId { get; set; }
         public Post Post { get; set; }
+
         [ForeignKey("TagId")]
         public int TagId { get; set; }
         public Tag Tag { get; set; }

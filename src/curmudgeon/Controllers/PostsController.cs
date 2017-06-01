@@ -7,6 +7,7 @@ using System.Security.Claims;
 using curmudgeon.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using curmudgeon.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -51,13 +52,40 @@ namespace curmudgeon.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Write(Post newPost)
+        public async Task<IActionResult> Write(WritePostViewModel newPost)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
             newPost.Account = thisUser;
             newPost.Date = DateTime.Today;
-            _db.Posts.Add(newPost);
+            Post savePost = newPost.WritePostConvert(newPost);
+            _db.Posts.Add(savePost);
+            string tagsString = newPost.TagsString;
+            string[] tags = tagsString.Split(',');
+
+            foreach(string s in tags)
+            {
+                if (_db.Tags.Any(t => t.Title == s))
+                    {
+                    PostTag newPostTag = new PostTag();
+                    Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
+                    newPostTag.PostId = savePost.PostId;
+                    newPostTag.TagId = foundTag.TagId;
+                    _db.PostTags.Add(newPostTag);
+                    Console.WriteLine("DB contains this tag");
+                    }
+                else
+                {
+                    PostTag newPostTag = new PostTag();
+                    Console.WriteLine("DB does not contain this tag");
+                    Tag newTag = new Tag(s);
+                    _db.Tags.Add(newTag);
+                    newPostTag.PostId = savePost.PostId;
+                    newPostTag.TagId = newTag.TagId;
+                    _db.PostTags.Add(newPostTag);
+                }
+            }
+
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

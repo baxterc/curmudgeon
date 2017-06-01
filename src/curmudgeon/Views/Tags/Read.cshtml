@@ -1,0 +1,15 @@
+﻿@model IEnumerable<curmudgeon.Models.Post>
+@{
+    ViewData["Title"] = "Posts tagged with ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Your Posts</h2>
+<ul>
+    @foreach (var post in Model)
+    {
+        <li>@Html.ActionLink(post.Title, "Read", "Posts", new { id = post.PostId }) </li>
+    }
+</ul>
+
+@Html.ActionLink("Back to Tags", "Index", "Tags")<br />

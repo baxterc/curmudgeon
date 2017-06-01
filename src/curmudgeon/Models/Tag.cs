@@ -17,5 +17,14 @@ namespace curmudgeon.Models
         public string Title { get; set; }
         public virtual List<PostTag> PostTags { get; set; }
 
+        public Tag(string title)
+        {
+            Title = title;
+        }
+
+        public Tag()
+        {
+
+        }
     }
 }

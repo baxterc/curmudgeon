@@ -1,5 +1,5 @@
 ﻿
-@model curmudgeon.Models.Post
+@model curmudgeon.ViewModels.WritePostViewModel
 @{
     ViewData["Title"] = "Curmudgeon - Write a New Post";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,6 +12,9 @@
     @Html.TextBoxFor(p => p.Title)
     <br />
     @Html.TextBoxFor(p => p.Content)
+    <br />
+    <p>Tags(separate with a comma)</p>
+    @Html.TextBoxFor(p => p.TagsString)
     
 <input type="submit" value="Publish" class="btn btn-default" />
 }
