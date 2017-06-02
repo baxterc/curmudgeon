@@ -87,6 +87,13 @@ namespace curmudgeon.Controllers
             }
 
             _db.SaveChanges();
+            string dirString = @"\posts\" + userId;
+            if (!System.IO.Directory.Exists(dirString))
+            {
+                System.IO.Directory.CreateDirectory(dirString);
+            }
+            string fileString = dirString + @"\" + newPost.PostId + ".txt";
+            System.IO.File.WriteAllText(fileString, newPost.Content);
             return RedirectToAction("Index");
         }
 
