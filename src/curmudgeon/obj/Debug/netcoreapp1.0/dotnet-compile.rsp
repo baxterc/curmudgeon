@@ -224,5 +224,6 @@ C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Repositories\EFCurmudg
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Repositories\ICurmudgeonRepository.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\AddCommentViewModel.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\LoginViewModel.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\ReadPostViewModel.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\RegisterViewModel.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\WritePostViewModel.cs

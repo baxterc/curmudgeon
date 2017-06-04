@@ -1,19 +1,28 @@
-﻿@model curmudgeon.Models.Post
+﻿@model curmudgeon.ViewModels.ReadPostViewModel
 @{
     ViewData["Title"] = "Curmudgeon";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>@Model.Title</h3>
-<div>@Model.Content</div>
+<h3>@Model.ReadPost.Title</h3>
+<div>@Model.ReadPost.Content</div>
 
 <ul id="post_comments">
-    @foreach (var comment in Model.Comments)
+    @foreach (var comment in Model.ReadPost.Comments)
     {
         <li>@Html.ActionLink(comment.Title, "Details", "Comments", new {id = comment.CommentId })</li>
     }
 </ul>
 
-@Html.ActionLink("Add a Comment", "Write", "Comments", new { id = Model.PostId})
+<h4>Tagged under:</h4>
+<ul id="post_tags">
+    @foreach (var tag in Model.ReadPostTags)
+    {
+        <li>@Html.ActionLink(tag.Title, "Read", "Tags", new { id = tag.TagId })</li>
+
+    }
+</ul>
+
+@Html.ActionLink("Add a Comment", "Write", "Comments", new { id = Model.ReadPost.PostId})
 
 @Html.ActionLink("Return to Posts", "Index")

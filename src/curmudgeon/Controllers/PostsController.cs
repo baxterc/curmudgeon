@@ -40,10 +40,22 @@ namespace curmudgeon.Controllers
             var thisPost = _db.Posts
                 .Where(p => p.PostId == id)
                 .Include(p => p.Comments)
+                .Include(p => p.PostTags)
                 .FirstOrDefault();
-            //var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
-                //Include(p => p.Comments).FirstOrDefault();
-            return View(thisPost);
+
+            List<Tag> thisPostTags = new List<Tag>();
+
+            foreach (PostTag postTag in thisPost.PostTags)
+            {
+                var addTag = _db.Tags
+                    .Where(t => t.TagId == postTag.TagId)
+                    .FirstOrDefault();
+                thisPostTags.Add(addTag);
+            }
+
+            ReadPostViewModel readPost = new ReadPostViewModel(thisPost, thisPostTags);
+
+            return View(readPost);
         }
 
         public IActionResult Write()
@@ -121,6 +133,12 @@ namespace curmudgeon.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
+            //Delete the PostTag join entries for this particular Post
+            var thisPostTags = _db.PostTags.Where(pt => pt.PostId == id);
+            foreach (PostTag postTag in thisPostTags)
+            {
+                _db.PostTags.Remove(postTag);
+            }
             _db.Posts.Remove(thisPost);
             _db.SaveChanges();
             return RedirectToAction("Index");

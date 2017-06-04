@@ -59,7 +59,6 @@ namespace curmudgeon.Controllers
             newComment.User = thisUser;
             newComment.CommentDate = DateTime.Today;
             newComment.CommentPostId = postId;
-            //_ctx.CommentSave(newComment, thisUser);
             _db.Comments.Add(newComment);
             _db.SaveChanges();
             return RedirectToAction("Read", "Posts", new { id = postId });
