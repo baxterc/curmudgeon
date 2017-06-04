@@ -132,13 +132,21 @@ namespace curmudgeon.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
+            var thisPost = _db.Posts
+                .Where(p => p.PostId == id)
+                .Include(p => p.Comments)
+                .Include(p => p.PostTags)
+                .FirstOrDefault();
             //Delete the PostTag join entries for this particular Post
-            var thisPostTags = _db.PostTags.Where(pt => pt.PostId == id);
+            //var thisPostTags = _db.PostTags.Where(pt => pt.PostId == id);
+            /*
             foreach (PostTag postTag in thisPostTags)
             {
                 _db.PostTags.Remove(postTag);
             }
+            */
+            _db.Comments.RemoveRange(thisPost.Comments);
+            _db.PostTags.RemoveRange(thisPost.PostTags);
             _db.Posts.Remove(thisPost);
             _db.SaveChanges();
             return RedirectToAction("Index");
