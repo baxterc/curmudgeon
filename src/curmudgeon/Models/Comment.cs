@@ -23,6 +23,7 @@ namespace curmudgeon.Models
         public int? ParentCommentId { get; set; }
         [ForeignKey("ParentCommentId")]
         public virtual Comment ParentComment { get; set; }
+        [InverseProperty("ParentComment")]
         public virtual ICollection<Comment> ChildComments { get; set; }
 
         

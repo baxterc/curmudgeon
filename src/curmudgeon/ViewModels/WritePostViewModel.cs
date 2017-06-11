@@ -10,7 +10,8 @@ namespace curmudgeon.ViewModels
     {
         public string TagsString { get; set; }
 
-        public Post WritePostConvert(WritePostViewModel viewModel)
+
+        public static Post WritePostConvert(WritePostViewModel viewModel)
         {
             Post returnPost = new Post();
             returnPost.Account = viewModel.Account;
@@ -21,6 +22,23 @@ namespace curmudgeon.ViewModels
             returnPost.PostTags = viewModel.PostTags;
             returnPost.Title = viewModel.Title;
             return returnPost;
+        }
+
+        public WritePostViewModel()
+        {
+
+        }
+
+        public WritePostViewModel(Post post, string tagString)
+        {
+            this.Account = post.Account;
+            this.Comments = post.Comments;
+            this.Content = post.Content;
+            this.Date = post.Date;
+            this.PostId = post.PostId;
+            this.PostTags = post.PostTags;
+            this.Title = post.Title;
+            this.TagsString = tagString;
         }
     }
 }

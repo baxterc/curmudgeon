@@ -16,5 +16,10 @@ namespace curmudgeon.ViewModels
             this.ReadPost = post;
             this.ReadPostTags = tagList;
         }
+
+        public ReadPostViewModel()
+        {
+
+        }
     }
 }

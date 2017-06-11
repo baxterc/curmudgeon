@@ -36,7 +36,6 @@ namespace curmudgeon.Controllers
 
         public async Task <IActionResult> Read(string id)
         {
-
             var tag = _db.Tags.Where(t => t.Title == id.ToString()).FirstOrDefault();
             List<PostTag> postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId).ToList();
             //var postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId);

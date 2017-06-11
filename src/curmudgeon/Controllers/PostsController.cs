@@ -44,6 +44,7 @@ namespace curmudgeon.Controllers
                 .FirstOrDefault();
 
             List<Tag> thisPostTags = new List<Tag>();
+            string thisPostTagsString = "";
 
             foreach (PostTag postTag in thisPost.PostTags)
             {
@@ -51,6 +52,7 @@ namespace curmudgeon.Controllers
                     .Where(t => t.TagId == postTag.TagId)
                     .FirstOrDefault();
                 thisPostTags.Add(addTag);
+                thisPostTagsString += addTag.Title + ",";
             }
 
             ReadPostViewModel readPost = new ReadPostViewModel(thisPost, thisPostTags);
@@ -70,7 +72,7 @@ namespace curmudgeon.Controllers
             var thisUser = await _userManager.FindByIdAsync(userId);
             newPost.Account = thisUser;
             newPost.Date = DateTime.Today;
-            Post savePost = newPost.WritePostConvert(newPost);
+            Post savePost = WritePostViewModel.WritePostConvert(newPost);
             _db.Posts.Add(savePost);
             string tagsString = newPost.TagsString;
             string[] tags = tagsString.Split(',');
@@ -99,26 +101,108 @@ namespace curmudgeon.Controllers
             }
 
             _db.SaveChanges();
-            string dirString = @"\posts\" + userId;
-            if (!System.IO.Directory.Exists(dirString))
-            {
-                System.IO.Directory.CreateDirectory(dirString);
-            }
-            string fileString = dirString + @"\" + newPost.PostId + ".txt";
-            System.IO.File.WriteAllText(fileString, newPost.Content);
             return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
         {
-            var thisPost = _db.Posts.FirstOrDefault(p => p.PostId == id);
-            return View(thisPost);
+            var thisPost = _db.Posts
+                           .Where(p => p.PostId == id)
+                           .Include(p => p.PostTags)
+                           .FirstOrDefault();
+
+            List<Tag> thisPostTags = new List<Tag>();
+            string thisPostTagsString = "";
+
+            foreach (PostTag postTag in thisPost.PostTags)
+            {
+                var addTag = _db.Tags
+                    .Where(t => t.TagId == postTag.TagId)
+                    .FirstOrDefault();
+                thisPostTags.Add(addTag);
+                thisPostTagsString += addTag.Title.ToString() + ",";
+            }
+
+            if (thisPostTagsString.Length > 0)
+            {
+                thisPostTagsString = thisPostTagsString.Substring(0, (thisPostTagsString.Length - 1));
+            }
+
+            WritePostViewModel editPost = new WritePostViewModel(thisPost, thisPostTagsString);
+
+            return View(editPost);
         }
 
+        //Edit needs its own viewmodel because the thisPostTags object in the below function is null.
         [HttpPost]
-        public IActionResult Edit(Post editPost)
+        public IActionResult Edit(WritePostViewModel editPost)
         {
-            _db.Entry(editPost).State = EntityState.Modified;
+            // Converts the viewmodel's post content into a Post object that can be saved later on.
+            Post savePost = WritePostViewModel.WritePostConvert(editPost);
+
+            //PostTags associated with the entry
+            var editPostPostTags = _db.PostTags.Where(pt => pt.PostId == editPost.PostId).Include(pt => pt.Tag).ToList();
+
+            List<Tag> TagsForThisPost = new List<Tag>();
+
+            foreach (PostTag postTag in editPostPostTags)
+            {
+                // Populates a list of actual Tags that are associated with this post
+                TagsForThisPost.Add(postTag.Tag);
+            }
+
+
+            //PostTags associated with the user's input
+
+            string tagsString = editPost.TagsString;
+            List<string> tagsSplitString = new List<string>();
+            if (tagsString != null)
+            {
+                tagsSplitString = tagsString.Split(',').ToList();
+            }
+
+            List<Tag> FoundTags = new List<Tag>();
+
+            foreach (string tagString in tagsSplitString)
+            {
+                Tag foundTag = _db.Tags.Where(t => t.Title == tagString).FirstOrDefault();
+                //Add the tag to the DB if it does not already exist; if it doesn't exist it's implied that a new PostTag entry should be made
+                if (foundTag == null)
+                {
+                    PostTag newPostTag = new PostTag();
+                    Tag newTag = new Tag(tagString);
+                    _db.Tags.Add(newTag);
+                    newPostTag.PostId = savePost.PostId;
+                    newPostTag.TagId = newTag.TagId;
+                    _db.PostTags.Add(newPostTag);
+                }
+                //If the tag already exists...
+                else
+                {
+                    //...Make a new PostTag entry if there isn't already one. i.e. if the PostTags for this post do not contain an entry with this tag ID, make a new entry
+                    if (!TagsForThisPost.Contains(foundTag))
+                    {
+                        PostTag newPostTag = new PostTag();
+                        newPostTag.Post = savePost;
+                        newPostTag.Tag = foundTag;
+                        _db.PostTags.Add(newPostTag);
+                    }
+                   // loop breaks if the tag already exists and is found in the post's tags.
+                }
+            }
+
+            //For each tag in this post...
+            foreach (Tag tag in TagsForThisPost)
+            {
+                //...If the Tag's title is not found in the array of tag titles or if the tag string is null...
+                if (!tagsSplitString.Contains(tag.Title) || tagsString == null)
+                {
+                    //...Delete the PostTag entry between this post and this tag
+                    _db.PostTags.Remove(tag.PostTags.Where(pt => pt.TagId == tag.TagId).FirstOrDefault());
+                }
+            }
+            //Save changes to the actual post
+            _db.Entry(savePost).State = EntityState.Modified;
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -18,11 +18,12 @@
 <ul id="post_tags">
     @foreach (var tag in Model.ReadPostTags)
     {
-        <li>@Html.ActionLink(tag.Title, "Read", "Tags", new { id = tag.TagId })</li>
-
+        <li>@Html.ActionLink(tag.Title, "Read", "Tags", new { id = tag.Title.ToString().ToLower() })</li>
     }
 </ul>
 
 @Html.ActionLink("Add a Comment", "Write", "Comments", new { id = Model.ReadPost.PostId})
+
+@Html.ActionLink("Edit this Post", "Edit", "Posts", new { id = Model.ReadPost.PostId })
 
 @Html.ActionLink("Return to Posts", "Index")

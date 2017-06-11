@@ -1,4 +1,4 @@
-﻿@model curmudgeon.Models.Post
+﻿@model curmudgeon.ViewModels.WritePostViewModel
 @{
     ViewData["Title"] = "Curmudgeon - Update Post";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,9 +12,12 @@
     @Html.TextBoxFor(p => p.Title)
     <br />
     @Html.TextBoxFor(p => p.Content)
+    
+    <br />
+    @Html.TextAreaFor(p => p.TagsString)
     @Html.HiddenFor(p => p.PostId)
 
     <input type="submit" value="Publish" class="btn btn-default" />
-    <br />
-    <input type="button" value="Cancel" onclick="location.href='/Posts/'" />
 }
+<br />
+<input type="button" value="Cancel" onclick="location.href='/Posts/'" />
