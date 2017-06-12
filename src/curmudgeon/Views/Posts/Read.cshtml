@@ -8,11 +8,43 @@
 <div>@Model.ReadPost.Content</div>
 
 <ul id="post_comments">
-    @foreach (var comment in Model.ReadPost.Comments)
+    @foreach (var comment in Model.PostComments)
     {
         <li>@Html.ActionLink(comment.Title, "Details", "Comments", new {id = comment.CommentId })</li>
     }
 </ul>
+@if (Model.Paginator.EndPage > 1)
+{
+    <ul class="pagination">
+        @if (Model.Paginator.CurrentPage > 1)
+        {
+            <li>
+                <a href="~/Home/Index">First</a>
+            </li>
+                            <li>
+                                <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@(Model.Paginator.CurrentPage - 1)">Previous</a>
+                            </li>
+        }
+
+        @for (var page = Model.Paginator.StartPage; page <= Model.Paginator.EndPage; page++)
+        {
+            <li class="@(page == Model.Paginator.CurrentPage ? "active" : "")">
+                <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@page">@page</a>
+            </li>    }
+
+        @if (Model.Paginator.CurrentPage < Model.Paginator.TotalPages)
+        {
+            <li>
+                <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@(Model.Paginator.CurrentPage + 1)">Next</a>
+            </li>
+                            <li>
+                                <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@(Model.Paginator.TotalPages)">Last</a>
+                            </li>
+        }
+    </ul>
+}
+
+		
 
 <h4>Tagged under:</h4>
 <ul id="post_tags">

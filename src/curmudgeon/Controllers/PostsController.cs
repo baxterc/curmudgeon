@@ -8,6 +8,7 @@ using curmudgeon.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using curmudgeon.ViewModels;
+using curmudgeon.Utilities;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,7 +36,7 @@ namespace curmudgeon.Controllers
             return View(posts);
         }
 
-        public IActionResult Read(int id)
+        public IActionResult Read(int id, int? commentpage)
         {
             var thisPost = _db.Posts
                 .Where(p => p.PostId == id)
@@ -55,7 +56,13 @@ namespace curmudgeon.Controllers
                 thisPostTagsString += addTag.Title + ",";
             }
 
+            Paginator paginator = new Paginator(thisPost.Comments.Count , commentpage, 10);
+
+            var paginatedComments = thisPost.Comments.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength);
+
             ReadPostViewModel readPost = new ReadPostViewModel(thisPost, thisPostTags);
+            readPost.PostComments = paginatedComments;
+            readPost.Paginator = paginator;
 
             return View(readPost);
         }
@@ -133,7 +140,6 @@ namespace curmudgeon.Controllers
             return View(editPost);
         }
 
-        //Edit needs its own viewmodel because the thisPostTags object in the below function is null.
         [HttpPost]
         public IActionResult Edit(WritePostViewModel editPost)
         {
@@ -151,9 +157,7 @@ namespace curmudgeon.Controllers
                 TagsForThisPost.Add(postTag.Tag);
             }
 
-
             //PostTags associated with the user's input
-
             string tagsString = editPost.TagsString;
             List<string> tagsSplitString = new List<string>();
             if (tagsString != null)
