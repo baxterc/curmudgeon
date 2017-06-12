@@ -19,7 +19,7 @@
         @if (Model.Paginator.CurrentPage > 1)
         {
             <li>
-                <a href="~/Home/Index">First</a>
+                <a href="~/Posts/Read/@(Model.ReadPost.PostId)">First</a>
             </li>
                             <li>
                                 <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@(Model.Paginator.CurrentPage - 1)">Previous</a>
