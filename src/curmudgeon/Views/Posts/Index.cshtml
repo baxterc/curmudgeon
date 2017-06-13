@@ -1,15 +1,49 @@
-﻿@model IEnumerable<curmudgeon.Models.Post>
+﻿@model curmudgeon.ViewModels.PostsIndexViewModel
 @{
     ViewData["Title"] = "Your Posts";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Your Posts</h2>
-<ul>
-    @foreach (var post in Model)
+
+<ul id="posts">
+    @foreach (var post in Model.Posts)
     {
-        <li>@Html.ActionLink(post.Title, "Read", new { id = post.PostId }) | @Html.ActionLink("Edit", "Edit", new { id = post.PostId }) | @Html.ActionLink("Delete", "Delete", new {id = post.PostId }) </li>
+        <li>@Html.ActionLink(post.Title, "Read", "Posts", new { id = post.PostId })</li>
     }
 </ul>
+
+@if (Model.Paginator.EndPage > 1)
+{
+    <ul>
+        @if (Model.Paginator.CurrentPage > 1)
+        {
+            <li>
+                <a href="~/Posts/">First</a>
+            </li>
+            <li>
+                <a href="~/Posts?page=@(Model.Paginator.CurrentPage - 1)">Previous</a>
+            </li>
+        }
+
+        @for (var page = Model.Paginator.StartPage; page <= Model.Paginator.EndPage; page++)
+        {
+            <li class="@(page == Model.Paginator.CurrentPage ? "active" : "")">
+                <a href="~/Posts?page=@page">@page</a>
+            </li>    }
+
+        @if (Model.Paginator.CurrentPage < Model.Paginator.TotalPages)
+        {
+            <li>
+                <a href="~/Posts?page=@(Model.Paginator.CurrentPage + 1)">Next</a>
+            </li>
+            <li>
+                <a href="~/Posts?page=@(Model.Paginator.TotalPages)">Last</a>
+            </li>
+        }
+    </ul>
+}
+
+
 
 @Html.ActionLink("Write a New Post", "Write", "Posts")<br />

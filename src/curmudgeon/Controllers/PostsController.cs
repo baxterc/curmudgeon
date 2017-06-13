@@ -27,13 +27,24 @@ namespace curmudgeon.Controllers
             _db = db;
         }
         
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
-            var posts = _db.Posts.Where(p => p.Account == thisUser);
-            return View(posts);
+            var posts = _db.Posts.Where(p => p.Account == thisUser).ToList();
+
+            Paginator paginator = new Paginator(posts.Count, page, 10);
+
+            var paginatedPosts = posts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength);
+
+            PostsIndexViewModel model = new PostsIndexViewModel()
+            {
+                Posts = paginatedPosts,
+                Paginator = paginator
+            };
+
+            return View(model);
         }
 
         public IActionResult Read(int id, int? commentpage)
