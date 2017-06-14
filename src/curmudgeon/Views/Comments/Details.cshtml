@@ -1,12 +1,24 @@
-﻿@model curmudgeon.Models.Comment
+﻿@model curmudgeon.ViewModels.CommentDetailsViewModel
 @{
-    ViewData["Title"] = "Curmudgeon";
+    ViewData["Title"] = "Curmudgeon - Read a Comment";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>@Model.Title</h3>
-<div>@Model.Content</div>
+<h3>@Model.ParentComment.Title</h3>
+<div>@Model.ParentComment.Content</div>
+
+<h2>Reply</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.LabelFor(c => c.ReplyComment.Title)
+    @Html.TextBoxFor(c => c.ReplyComment.Title)
+    <br />
+    @Html.TextBoxFor(c => c.ReplyComment.Content)
+    @Html.HiddenFor(p => p.ParentComment.CommentId)
+    <input type="submit" value="Reply" class="btn btn-default" />
+}
 
 <div>
-    @Html.ActionLink("Back to main entry", "Read", "Posts", new { id = Model.CommentPostId })
+    @Html.ActionLink("Back to main entry", "Read", "Posts", new { id = Model.ParentComment.CommentPostId })
 </div>

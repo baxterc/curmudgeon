@@ -10,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Moq;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace curmudgeon.Controllers
 {
     public class CommentsController : Controller
@@ -66,8 +64,35 @@ namespace curmudgeon.Controllers
 
         public IActionResult Details(int id)
         {
-            var thisComment = _db.Comments.FirstOrDefault(c => c.CommentId == id);
-            return View(thisComment);
+            var thisComment = _db.Comments.Where(c => c.CommentId == id).Include(c => c.ChildComments).FirstOrDefault();
+            CommentDetailsViewModel model = new CommentDetailsViewModel()
+            {
+                ParentComment = thisComment
+            };
+            
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Details(CommentDetailsViewModel commentModel)
+        {
+            Comment parentComment = _db.Comments.FirstOrDefault(p => p.CommentId == commentModel.ParentComment.CommentId);
+
+            Comment childComment = commentModel.ReplyComment;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            childComment.CommentPostId = parentComment.CommentPostId;
+            childComment.CommentDate = DateTime.Today;
+
+            childComment.ParentComment = parentComment;
+            childComment.ParentCommentId = parentComment.CommentId;
+            childComment.CommentPost = parentComment.CommentPost;
+
+            _db.Comments.Add(childComment);
+
+            _db.SaveChanges();
+
+            return View(commentModel);
         }
 
         public IActionResult Update(int id)

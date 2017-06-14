@@ -226,6 +226,7 @@ C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Repositories\EFCurmudg
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Models\Repositories\ICurmudgeonRepository.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Utilities\Paginator.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\AddCommentViewModel.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\CommentDetailsViewModel.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\EditPostViewModel.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\LoginViewModel.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\PostsIndexViewModel.cs

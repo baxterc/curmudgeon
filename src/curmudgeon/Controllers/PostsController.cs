@@ -58,13 +58,16 @@ namespace curmudgeon.Controllers
             List<Tag> thisPostTags = new List<Tag>();
             string thisPostTagsString = "";
 
-            foreach (PostTag postTag in thisPost.PostTags)
+            if (thisPostTags != null)
             {
-                var addTag = _db.Tags
-                    .Where(t => t.TagId == postTag.TagId)
-                    .FirstOrDefault();
-                thisPostTags.Add(addTag);
-                thisPostTagsString += addTag.Title + ",";
+                foreach (PostTag postTag in thisPost.PostTags)
+                {
+                    var addTag = _db.Tags
+                        .Where(t => t.TagId == postTag.TagId)
+                        .FirstOrDefault();
+                    thisPostTags.Add(addTag);
+                    thisPostTagsString += addTag.Title + ",";
+                }
             }
 
             Paginator paginator = new Paginator(thisPost.Comments.Count , commentpage, 10);
