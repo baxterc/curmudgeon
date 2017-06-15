@@ -19,6 +19,21 @@ namespace curmudgeon.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
+        public static void CommentDelete (int commentId, CurmudgeonDbContext db)
+        {
+            Comment deleteComment = db.Comments.Where(c => c.CommentId == commentId).Include(c => c.ChildComments).FirstOrDefault();
+
+            db.Comments.Remove(deleteComment);
+
+            if (deleteComment.ChildComments != null)
+            {
+                   foreach (Comment reply in deleteComment.ChildComments)
+                {
+                    CommentDelete(reply.CommentId, db);
+                }
+            }
+        }
+
         public CommentsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, CurmudgeonDbContext db, ICurmudgeonRepository ctx = null)
         {
             _userManager = userManager;
@@ -92,7 +107,7 @@ namespace curmudgeon.Controllers
 
             _db.SaveChanges();
 
-            return View(commentModel);
+            return RedirectToAction("Read", "Posts", new { id = parentComment.CommentPostId});
         }
 
         public IActionResult Update(int id)
@@ -112,16 +127,28 @@ namespace curmudgeon.Controllers
         public IActionResult Delete(int id)
         { 
             var thisComment = _db.Comments.FirstOrDefault(c => c.CommentId == id);
+            TempData["postId"] = thisComment.CommentPostId;
             return View(thisComment);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            var thisComment = _db.Comments.FirstOrDefault(c => c.CommentId == id);
+            var postId = int.Parse(TempData["postId"].ToString());
+            /*
+            
+            var thisComment = _db.Comments.Where(c => c.CommentId == id).Include(c => c.ChildComments).FirstOrDefault();
+            
             _db.Comments.Remove(thisComment);
             _db.SaveChanges();
-            return RedirectToAction("Index");
+
+            */
+            
+            CommentDelete(id, _db);
+
+            _db.SaveChanges();
+
+            return RedirectToAction("Read", "Posts", new { id = postId });
         }
     }
 }

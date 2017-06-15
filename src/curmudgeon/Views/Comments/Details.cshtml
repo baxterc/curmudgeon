@@ -20,5 +20,5 @@
 }
 
 <div>
-    @Html.ActionLink("Back to main entry", "Read", "Posts", new { id = Model.ParentComment.CommentPostId })
+    @Html.ActionLink("Back to main entry", "Read", "Posts", new { id = Model.ParentComment.CommentPostId }) | @Html.ActionLink("Delete this comment", "Delete", "Comments", new { id = Model.ParentComment.CommentId})
 </div>

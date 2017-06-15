@@ -58,7 +58,7 @@ namespace curmudgeon.Controllers
             List<Tag> thisPostTags = new List<Tag>();
             string thisPostTagsString = "";
 
-            if (thisPostTags != null)
+            if (thisPost.PostTags != null)
             {
                 foreach (PostTag postTag in thisPost.PostTags)
                 {
