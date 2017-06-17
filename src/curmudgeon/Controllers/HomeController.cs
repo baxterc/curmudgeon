@@ -55,7 +55,7 @@ namespace curmudgeon.Controllers
                 var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var thisUser = _db.Users.Where(u => u.Id == userId).Include(u => u.UserPosts).FirstOrDefault();
                 Paginator paginator = new Paginator(thisUser.UserPosts.Count, page, 10);
-                var paginatedPosts = thisUser.UserPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength);
+                var paginatedPosts = thisUser.UserPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
                 var viewModel = UserBlogsViewModel.UserConvertBlogViewModel(thisUser, paginatedPosts, paginator);
                 return View(viewModel);
             }
@@ -63,7 +63,7 @@ namespace curmudgeon.Controllers
             {
                 var thisUser = _db.Users.Where(u => u.Nickname == id.ToLower()).Include(u => u.UserPosts).FirstOrDefault();
                 Paginator paginator = new Paginator(thisUser.UserPosts.Count, page, 10);
-                var paginatedPosts = thisUser.UserPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength);
+                var paginatedPosts = thisUser.UserPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
                 var viewModel = UserBlogsViewModel.UserConvertBlogViewModel(thisUser, paginatedPosts, paginator);
                 return View(viewModel);
             }

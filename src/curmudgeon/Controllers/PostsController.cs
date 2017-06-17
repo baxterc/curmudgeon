@@ -36,7 +36,7 @@ namespace curmudgeon.Controllers
 
             Paginator paginator = new Paginator(posts.Count, page, 10);
 
-            var paginatedPosts = posts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength);
+            var paginatedPosts = posts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
 
             PostsIndexViewModel model = new PostsIndexViewModel()
             {
