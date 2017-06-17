@@ -21,6 +21,7 @@ namespace curmudgeon.ViewModels
             returnPost.PostId = viewModel.PostId;
             returnPost.PostTags = viewModel.PostTags;
             returnPost.Title = viewModel.Title;
+            returnPost.Private = viewModel.Private;
             return returnPost;
         }
 

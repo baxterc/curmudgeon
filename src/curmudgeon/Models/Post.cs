@@ -15,6 +15,7 @@ namespace curmudgeon.Models
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime Date { get; set; }
+        public bool Private { get; set; }
         public virtual ICollection<PostTag> PostTags { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ApplicationUser Account { get; set; } 
