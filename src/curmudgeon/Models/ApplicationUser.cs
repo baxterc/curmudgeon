@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using curmudgeon.ViewModels;
 
 namespace curmudgeon.Models
 {
@@ -21,7 +22,6 @@ namespace curmudgeon.Models
         public virtual ICollection<UserFollow> Followers { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<UserFollow> Following { get; set; }
-        
     }
 
     public class UserFollow
@@ -36,14 +36,4 @@ namespace curmudgeon.Models
         public string FollowerId { get; set; }
         public virtual ApplicationUser Follower { get; set; }
     }
-    /*
-    public class UserFollowed : ApplicationUser
-    {
-
-    }
-
-    public class Follower : ApplicationUser
-    {
-
-    }*/
 }

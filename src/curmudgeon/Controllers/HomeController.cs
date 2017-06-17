@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using curmudgeon.Models;
 using curmudgeon.ViewModels;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using curmudgeon.Utilities;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -41,6 +44,28 @@ namespace curmudgeon.Controllers
             else
             {
                 return View();
+            }
+        }
+        public async Task<IActionResult> Blogs(string id, int? page)
+        {
+
+            if (id == null)
+            {
+                //Takes the user to their own posts
+                var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var thisUser = _db.Users.Where(u => u.Id == userId).Include(u => u.UserPosts).FirstOrDefault();
+                Paginator paginator = new Paginator(thisUser.UserPosts.Count, page, 10);
+                var paginatedPosts = thisUser.UserPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength);
+                var viewModel = UserBlogsViewModel.UserConvertBlogViewModel(thisUser, paginatedPosts, paginator);
+                return View(viewModel);
+            }
+            else
+            {
+                var thisUser = _db.Users.Where(u => u.Nickname == id.ToLower()).Include(u => u.UserPosts).FirstOrDefault();
+                Paginator paginator = new Paginator(thisUser.UserPosts.Count, page, 10);
+                var paginatedPosts = thisUser.UserPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength);
+                var viewModel = UserBlogsViewModel.UserConvertBlogViewModel(thisUser, paginatedPosts, paginator);
+                return View(viewModel);
             }
         }
     }

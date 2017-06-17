@@ -53,24 +53,6 @@ namespace curmudgeon.Controllers
             }
         }
 
-        public async Task<IActionResult> Info(string id)
-        {
-            // this needs to use a ViewModel instead of an entire User object.
-            if (id == null)
-            {
-                var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var thisUser = _db.Users.Where(u => u.Id == userId).Include(u => u.UserPosts).FirstOrDefault();
-                //var thisUser = await _userManager.FindByIdAsync(userId);
-                return View(thisUser);
-            }
-            else
-            {
-                var thisUser = _db.Users.Where(u => u.Nickname == id).Include(u => u.UserPosts).FirstOrDefault();
-               
-                return View(thisUser);
-            }   
-        }
-
         public async Task<IActionResult> Update()
         {
             // needs a ViewModel

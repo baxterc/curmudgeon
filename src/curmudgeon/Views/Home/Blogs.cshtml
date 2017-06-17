@@ -1,0 +1,46 @@
+﻿@model curmudgeon.ViewModels.UserBlogsViewModel
+@{
+    ViewData["Title"] = "Curmudgeon - User Info for " + Model.Nickname;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>@Model.DisplayName</h3>
+<h4>Recent Posts</h4>
+
+<ul id="posts">
+    @foreach (var post in Model.Posts)
+    {
+        <li>@Html.ActionLink(post.Title, "Read", "Posts", new { id = post.PostId })</li>
+    }
+</ul>
+
+@if (Model.Paginator.EndPage > 1)
+{
+    <ul>
+        @if (Model.Paginator.CurrentPage > 1)
+        {
+            <li>
+                <a href="~/Home/Blogs/@Model.Nickname">First</a>
+            </li>
+            <li>
+                <a href="~/Home/Blogs/@Model.Nickname?page=@(Model.Paginator.CurrentPage - 1)">Previous</a>
+            </li>
+        }
+
+        @for (var page = Model.Paginator.StartPage; page <= Model.Paginator.EndPage; page++)
+        {
+            <li class="@(page == Model.Paginator.CurrentPage ? "active" : "")">
+                <a href="~/Home/Blogs/@Model.Nickname?page=@page">@page</a>
+            </li>    }
+
+        @if (Model.Paginator.CurrentPage < Model.Paginator.TotalPages)
+        {
+            <li>
+                <a href="~/Home/Blogs/@Model.Nickname?page=@(Model.Paginator.CurrentPage + 1)">Next</a>
+            </li>
+            <li>
+                <a href="~/Home/Blogs/@Model.Nickname?page=@(Model.Paginator.TotalPages)">Last</a>
+            </li>
+        }
+    </ul>
+}
