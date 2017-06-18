@@ -49,11 +49,29 @@ namespace curmudgeon.Controllers
 
         public IActionResult Read(int id, int? commentpage)
         {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             var thisPost = _db.Posts
                 .Where(p => p.PostId == id)
                 .Include(p => p.Comments)
                 .Include(p => p.PostTags)
+                .Include(p => p.Account)
                 .FirstOrDefault();
+
+            if (thisPost.Account.Id != userId && thisPost.Private == true)
+            {
+                Post privatePost = new Post()
+                {
+                    Title = "This post is marked private",
+                    Content = "The author of this post post has made this post private and it cannot be viewed.",
+                    Private = true
+                };
+                ReadPostViewModel privatePostViewModel = new ReadPostViewModel()
+                {
+                    ReadPost = privatePost
+                };
+                return View(privatePostViewModel);
+            }
 
             List<Tag> thisPostTags = new List<Tag>();
             string thisPostTagsString = "";
