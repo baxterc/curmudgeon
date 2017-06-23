@@ -169,74 +169,91 @@ namespace curmudgeon.Controllers
 
             WritePostViewModel editPost = new WritePostViewModel(thisPost, thisPostTagsString);
 
+            TempData["PostTagsString"] = thisPostTagsString;
+            TempData.Keep("PostTagsString");
+
             return View(editPost);
         }
 
         [HttpPost]
         public IActionResult Edit(WritePostViewModel editPost)
         {
+            
+            string initialTagsString = "";
+            if (initialTagsString != null)
+            {
+                initialTagsString = TempData.Peek("PostTagsString").ToString();
+            }
+
             // Converts the viewmodel's post content into a Post object that can be saved later on.
             Post savePost = WritePostViewModel.WritePostConvert(editPost);
 
-            //PostTags associated with the entry
-            var editPostPostTags = _db.PostTags.Where(pt => pt.PostId == editPost.PostId).Include(pt => pt.Tag).ToList();
+            //Check to see if the tags string assembled from the initial post is different from what was submitted
 
-            List<Tag> TagsForThisPost = new List<Tag>();
-
-            foreach (PostTag postTag in editPostPostTags)
+            if (editPost.TagsString.ToString() != initialTagsString)
             {
-                // Populates a list of actual Tags that are associated with this post
-                TagsForThisPost.Add(postTag.Tag);
-            }
+                //PostTags associated with the entry
+                var editPostPostTags = _db.PostTags.Where(pt => pt.PostId == editPost.PostId).Include(pt => pt.Tag).ToList();
 
-            //PostTags associated with the user's input
-            string tagsString = editPost.TagsString;
-            List<string> tagsSplitString = new List<string>();
-            if (tagsString != null)
-            {
-                tagsSplitString = tagsString.Split(',').ToList();
-            }
+                List<Tag> TagsForThisPost = new List<Tag>();
 
-            List<Tag> FoundTags = new List<Tag>();
-
-            foreach (string tagString in tagsSplitString)
-            {
-                Tag foundTag = _db.Tags.Where(t => t.Title == tagString).FirstOrDefault();
-                //Add the tag to the DB if it does not already exist; if it doesn't exist it's implied that a new PostTag entry should be made
-                if (foundTag == null)
+                foreach (PostTag postTag in editPostPostTags)
                 {
-                    PostTag newPostTag = new PostTag();
-                    Tag newTag = new Tag(tagString);
-                    _db.Tags.Add(newTag);
-                    newPostTag.PostId = savePost.PostId;
-                    newPostTag.TagId = newTag.TagId;
-                    _db.PostTags.Add(newPostTag);
+                    // Populates a list of actual Tags that are associated with this post
+                    TagsForThisPost.Add(postTag.Tag);
                 }
-                //If the tag already exists...
-                else
+
+                //PostTags associated with the user's input
+                string tagsString = editPost.TagsString;
+                List<string> tagsSplitString = new List<string>();
+                if (tagsString != null)
                 {
-                    //...Make a new PostTag entry if there isn't already one. i.e. if the PostTags for this post do not contain an entry with this tag ID, make a new entry
-                    if (!TagsForThisPost.Contains(foundTag))
+                    tagsSplitString = tagsString.Split(',').ToList();
+                }
+
+                List<Tag> FoundTags = new List<Tag>();
+
+                foreach (string tagString in tagsSplitString)
+                {
+                    Tag foundTag = _db.Tags.Where(t => t.Title == tagString).FirstOrDefault();
+                    //Add the tag to the DB if it does not already exist; if it doesn't exist it's implied that a new PostTag entry should be made
+                    if (foundTag == null)
                     {
                         PostTag newPostTag = new PostTag();
-                        newPostTag.Post = savePost;
-                        newPostTag.Tag = foundTag;
+                        Tag newTag = new Tag(tagString);
+                        _db.Tags.Add(newTag);
+                        newPostTag.PostId = savePost.PostId;
+                        newPostTag.TagId = newTag.TagId;
                         _db.PostTags.Add(newPostTag);
                     }
-                   // loop breaks if the tag already exists and is found in the post's tags.
+                    //If the tag already exists...
+                    else
+                    {
+                        //...Make a new PostTag entry if there isn't already one. i.e. if the PostTags for this post do not contain an entry with this tag ID, make a new entry
+                        if (!TagsForThisPost.Contains(foundTag))
+                        {
+                            PostTag newPostTag = new PostTag();
+                            newPostTag.Post = savePost;
+                            newPostTag.Tag = foundTag;
+                            _db.PostTags.Add(newPostTag);
+                        }
+                        // loop breaks if the tag already exists and is found in the post's tags.
+                    }
+                }
+
+                //For each tag in this post...
+                foreach (Tag tag in TagsForThisPost)
+                {
+                    //...If the Tag's title is not found in the array of tag titles or if the tag string is null...
+                    if (!tagsSplitString.Contains(tag.Title) || tagsString == null)
+                    {
+                        //...Delete the PostTag entry between this post and this tag
+                        _db.PostTags.Remove(tag.PostTags.Where(pt => pt.TagId == tag.TagId).FirstOrDefault());
+                    }
                 }
             }
 
-            //For each tag in this post...
-            foreach (Tag tag in TagsForThisPost)
-            {
-                //...If the Tag's title is not found in the array of tag titles or if the tag string is null...
-                if (!tagsSplitString.Contains(tag.Title) || tagsString == null)
-                {
-                    //...Delete the PostTag entry between this post and this tag
-                    _db.PostTags.Remove(tag.PostTags.Where(pt => pt.TagId == tag.TagId).FirstOrDefault());
-                }
-            }
+            
             //Save changes to the actual post
             _db.Entry(savePost).State = EntityState.Modified;
             _db.SaveChanges();
