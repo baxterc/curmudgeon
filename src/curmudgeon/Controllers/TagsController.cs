@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using curmudgeon.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using curmudgeon.Utilities;
+using curmudgeon.ViewModels;
 
 namespace curmudgeon.Controllers
 {
@@ -34,7 +36,7 @@ namespace curmudgeon.Controllers
         }
         */
 
-        public async Task <IActionResult> Read(string id)
+        public async Task <IActionResult> Read(string id, int? page)
         {
             var tag = _db.Tags.Where(t => t.Title == id.ToString()).FirstOrDefault();
             List<PostTag> postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId).ToList();
@@ -46,7 +48,18 @@ namespace curmudgeon.Controllers
                 var addPost = _db.Posts.Where(p => p.PostId == postId).FirstOrDefault();
                 taggedPosts.Add(addPost);
             }
-            return View(taggedPosts);
+            Paginator paginator = new Paginator(taggedPosts.Count, page, 10);
+
+            var paginatedPosts = taggedPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
+
+            TagsReadViewModel model = new TagsReadViewModel()
+            {
+                Posts = paginatedPosts,
+                Paginator = paginator,
+                TagName = id
+            };
+
+            return View(model);
         }
     }
 }
