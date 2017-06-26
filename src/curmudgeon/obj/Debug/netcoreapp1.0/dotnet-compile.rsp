@@ -213,6 +213,8 @@ C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170606013306_Inv
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170606013306_InverseCommentProp.Designer.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170617154445_AddPrivateToPosts.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170617154445_AddPrivateToPosts.Designer.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170623031242_AddDraftFlag.cs
+C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170623031242_AddDraftFlag.Designer.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\CurmudgeonDbContextModelSnapshot.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\TestDb\20170407185229_TestDB.cs
 C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\TestDb\20170407185229_TestDB.Designer.cs

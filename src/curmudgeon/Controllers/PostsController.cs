@@ -32,11 +32,30 @@ namespace curmudgeon.Controllers
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
-            var posts = _db.Posts.Where(p => p.Account == thisUser).ToList();
+            var posts = _db.Posts.Where(p => p.Account == thisUser).Where(p => p.IsDraft == false).ToList();
 
             Paginator paginator = new Paginator(posts.Count, page, 10);
 
             var paginatedPosts = posts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
+
+            PostsIndexViewModel model = new PostsIndexViewModel()
+            {
+                Posts = paginatedPosts,
+                Paginator = paginator
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Drafts(int? page)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            var drafts = _db.Posts.Where(p => p.Account == thisUser).Where(p=> p.IsDraft == true).ToList();
+
+            Paginator paginator = new Paginator(drafts.Count, page, 10);
+
+            var paginatedPosts = drafts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
 
             PostsIndexViewModel model = new PostsIndexViewModel()
             {
@@ -148,31 +167,45 @@ namespace curmudgeon.Controllers
             var thisPost = _db.Posts
                            .Where(p => p.PostId == id)
                            .Include(p => p.PostTags)
+                           .Include(p => p.Account)
                            .FirstOrDefault();
 
-            List<Tag> thisPostTags = new List<Tag>();
-            string thisPostTagsString = "";
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            foreach (PostTag postTag in thisPost.PostTags)
+            if (thisPost.Account.Id == userId)
             {
-                var addTag = _db.Tags
-                    .Where(t => t.TagId == postTag.TagId)
-                    .FirstOrDefault();
-                thisPostTags.Add(addTag);
-                thisPostTagsString += addTag.Title.ToString() + ",";
+                List<Tag> thisPostTags = new List<Tag>();
+                string thisPostTagsString = "";
+
+                foreach (PostTag postTag in thisPost.PostTags)
+                {
+                    var addTag = _db.Tags
+                        .Where(t => t.TagId == postTag.TagId)
+                        .FirstOrDefault();
+                    thisPostTags.Add(addTag);
+                    thisPostTagsString += addTag.Title.ToString() + ",";
+                }
+
+                if (thisPostTagsString.Length > 0)
+                {
+                    thisPostTagsString = thisPostTagsString.Substring(0, (thisPostTagsString.Length - 1));
+                }
+
+                WritePostViewModel editPost = new WritePostViewModel(thisPost, thisPostTagsString);
+
+                TempData["PostTagsString"] = thisPostTagsString;
+                TempData.Keep("PostTagsString");
+
+                TempData["AccountId"] = thisPost.Account.Id;
+                TempData.Keep("AccountId");
+
+                return View(editPost);
             }
 
-            if (thisPostTagsString.Length > 0)
+            else
             {
-                thisPostTagsString = thisPostTagsString.Substring(0, (thisPostTagsString.Length - 1));
+                return RedirectToAction("Index", "Posts");
             }
-
-            WritePostViewModel editPost = new WritePostViewModel(thisPost, thisPostTagsString);
-
-            TempData["PostTagsString"] = thisPostTagsString;
-            TempData.Keep("PostTagsString");
-
-            return View(editPost);
         }
 
         [HttpPost]
@@ -180,84 +213,95 @@ namespace curmudgeon.Controllers
         {
             
             string initialTagsString = "";
-            if (initialTagsString != null)
+            if (TempData.Peek("PostTagsString").ToString() != null)
             {
                 initialTagsString = TempData.Peek("PostTagsString").ToString();
             }
 
             // Converts the viewmodel's post content into a Post object that can be saved later on.
             Post savePost = WritePostViewModel.WritePostConvert(editPost);
+            string userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            string originalPostUserId = TempData.Peek("AccountId").ToString();
 
-            //Check to see if the tags string assembled from the initial post is different from what was submitted
-
-            if (editPost.TagsString.ToString() != initialTagsString)
+            //check to see if the user making the POST request is the same as the owner of the post being edited
+            if (userId == originalPostUserId)
             {
-                //PostTags associated with the entry
-                var editPostPostTags = _db.PostTags.Where(pt => pt.PostId == editPost.PostId).Include(pt => pt.Tag).ToList();
+                //Check to see if the tags string assembled from the initial post is different from what was submitted
 
-                List<Tag> TagsForThisPost = new List<Tag>();
-
-                foreach (PostTag postTag in editPostPostTags)
+                if (editPost.TagsString.ToString() != initialTagsString)
                 {
-                    // Populates a list of actual Tags that are associated with this post
-                    TagsForThisPost.Add(postTag.Tag);
-                }
+                    //PostTags associated with the entry
+                    var editPostPostTags = _db.PostTags.Where(pt => pt.PostId == editPost.PostId).Include(pt => pt.Tag).ToList();
 
-                //PostTags associated with the user's input
-                string tagsString = editPost.TagsString;
-                List<string> tagsSplitString = new List<string>();
-                if (tagsString != null)
-                {
-                    tagsSplitString = tagsString.Split(',').ToList();
-                }
+                    List<Tag> TagsForThisPost = new List<Tag>();
 
-                List<Tag> FoundTags = new List<Tag>();
-
-                foreach (string tagString in tagsSplitString)
-                {
-                    Tag foundTag = _db.Tags.Where(t => t.Title == tagString).FirstOrDefault();
-                    //Add the tag to the DB if it does not already exist; if it doesn't exist it's implied that a new PostTag entry should be made
-                    if (foundTag == null)
+                    foreach (PostTag postTag in editPostPostTags)
                     {
-                        PostTag newPostTag = new PostTag();
-                        Tag newTag = new Tag(tagString);
-                        _db.Tags.Add(newTag);
-                        newPostTag.PostId = savePost.PostId;
-                        newPostTag.TagId = newTag.TagId;
-                        _db.PostTags.Add(newPostTag);
+                        // Populates a list of actual Tags that are associated with this post
+                        TagsForThisPost.Add(postTag.Tag);
                     }
-                    //If the tag already exists...
-                    else
+
+                    //PostTags associated with the user's input
+                    string tagsString = editPost.TagsString;
+                    List<string> tagsSplitString = new List<string>();
+                    if (tagsString != null)
                     {
-                        //...Make a new PostTag entry if there isn't already one. i.e. if the PostTags for this post do not contain an entry with this tag ID, make a new entry
-                        if (!TagsForThisPost.Contains(foundTag))
+                        tagsSplitString = tagsString.Split(',').ToList();
+                    }
+
+                    List<Tag> FoundTags = new List<Tag>();
+
+                    foreach (string tagString in tagsSplitString)
+                    {
+                        Tag foundTag = _db.Tags.Where(t => t.Title == tagString).FirstOrDefault();
+                        //Add the tag to the DB if it does not already exist; if it doesn't exist it's implied that a new PostTag entry should be made
+                        if (foundTag == null)
                         {
                             PostTag newPostTag = new PostTag();
-                            newPostTag.Post = savePost;
-                            newPostTag.Tag = foundTag;
+                            Tag newTag = new Tag(tagString);
+                            _db.Tags.Add(newTag);
+                            newPostTag.PostId = savePost.PostId;
+                            newPostTag.TagId = newTag.TagId;
                             _db.PostTags.Add(newPostTag);
                         }
-                        // loop breaks if the tag already exists and is found in the post's tags.
+                        //If the tag already exists...
+                        else
+                        {
+                            //...Make a new PostTag entry if there isn't already one. i.e. if the PostTags for this post do not contain an entry with this tag ID, make a new entry
+                            if (!TagsForThisPost.Contains(foundTag))
+                            {
+                                PostTag newPostTag = new PostTag();
+                                newPostTag.Post = savePost;
+                                newPostTag.Tag = foundTag;
+                                _db.PostTags.Add(newPostTag);
+                            }
+                            // loop breaks if the tag already exists and is found in the post's tags.
+                        }
+                    }
+
+                    //For each tag in this post...
+                    foreach (Tag tag in TagsForThisPost)
+                    {
+                        //...If the Tag's title is not found in the array of tag titles or if the tag string is null...
+                        if (!tagsSplitString.Contains(tag.Title) || tagsString == null)
+                        {
+                            //...Delete the PostTag entry between this post and this tag
+                            _db.PostTags.Remove(tag.PostTags.Where(pt => pt.TagId == tag.TagId).FirstOrDefault());
+                        }
                     }
                 }
 
-                //For each tag in this post...
-                foreach (Tag tag in TagsForThisPost)
-                {
-                    //...If the Tag's title is not found in the array of tag titles or if the tag string is null...
-                    if (!tagsSplitString.Contains(tag.Title) || tagsString == null)
-                    {
-                        //...Delete the PostTag entry between this post and this tag
-                        _db.PostTags.Remove(tag.PostTags.Where(pt => pt.TagId == tag.TagId).FirstOrDefault());
-                    }
-                }
+
+                //Save changes to the actual post
+                _db.Entry(savePost).State = EntityState.Modified;
+                _db.SaveChanges();
+                return RedirectToAction("Index");
             }
 
-            
-            //Save changes to the actual post
-            _db.Entry(savePost).State = EntityState.Modified;
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public IActionResult Delete(int id)
