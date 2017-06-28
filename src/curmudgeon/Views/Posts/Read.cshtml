@@ -65,7 +65,7 @@
         </ul>
     }
        
-@if (Model.ReadPost.Private != true)
+@if (Model.ReadPost.IsPrivate != true)
 {
     @Html.ActionLink("Add a Comment", "Write", "Comments", new { id = Model.ReadPost.PostId })
 }

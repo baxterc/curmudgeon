@@ -77,13 +77,13 @@ namespace curmudgeon.Controllers
                 .Include(p => p.Account)
                 .FirstOrDefault();
 
-            if (thisPost.Account.Id != userId && thisPost.Private == true)
+            if (thisPost.Account.Id != userId && thisPost.IsPrivate == true)
             {
                 Post privatePost = new Post()
                 {
                     Title = "This post is marked private",
                     Content = "The author of this post post has made this post private and it cannot be viewed.",
-                    Private = true
+                    IsPrivate = true
                 };
                 ReadPostViewModel privatePostViewModel = new ReadPostViewModel()
                 {
@@ -160,6 +160,51 @@ namespace curmudgeon.Controllers
 
             _db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveDraft(string draftTitle, string draftContent, string draftTagsString, bool draftIsPrivate)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            Post newPost = new Models.Post()
+            {
+                Account = thisUser,
+                Date = DateTime.Today,
+                Title = draftTitle,
+                Content = draftContent,
+                IsPrivate = draftIsPrivate,
+                IsDraft = true
+            };
+            _db.Posts.Add(newPost);
+            
+            string[] tags = draftTagsString.Split(',');
+
+            foreach (string s in tags)
+            {
+                if (_db.Tags.Any(t => t.Title == s))
+                {
+                    PostTag newPostTag = new PostTag();
+                    Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
+                    newPostTag.PostId = newPost.PostId;
+                    newPostTag.TagId = foundTag.TagId;
+                    _db.PostTags.Add(newPostTag);
+                    Console.WriteLine("DB contains this tag");
+                }
+                else
+                {
+                    PostTag newPostTag = new PostTag();
+                    Console.WriteLine("DB does not contain this tag");
+                    Tag newTag = new Tag(s);
+                    _db.Tags.Add(newTag);
+                    newPostTag.PostId = newPost.PostId;
+                    newPostTag.TagId = newTag.TagId;
+                    _db.PostTags.Add(newPostTag);
+                }
+            }
+
+            _db.SaveChanges();
+            return Json(new { url = Url.Action("Index", "Posts") });
         }
 
         public IActionResult Edit(int id)

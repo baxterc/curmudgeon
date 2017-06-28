@@ -54,8 +54,9 @@ namespace curmudgeon.Controllers
                 //Takes the user to their own posts
                 var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var thisUser = _db.Users.Where(u => u.Id == userId).Include(u => u.UserPosts).FirstOrDefault();
+                
                 Paginator paginator = new Paginator(thisUser.UserPosts.Count, page, 10);
-                var paginatedPosts = thisUser.UserPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
+                var paginatedPosts = thisUser.UserPosts.Where(p => p.IsDraft != true).Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
                 var viewModel = UserBlogsViewModel.UserConvertBlogViewModel(thisUser, paginatedPosts, paginator);
                 return View(viewModel);
             }
@@ -63,11 +64,12 @@ namespace curmudgeon.Controllers
             {
                 ApplicationUser foundUser = _db.Users.Where(u => u.Nickname == id.ToLower()).Include(u => u.UserPosts).FirstOrDefault();
 
-                var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var clientUserId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                if (foundUser.Id != userId)
+                
+                if (foundUser.Id != clientUserId)
                 {
-                    foundUser.UserPosts = _db.Posts.Where(p => p.Account == foundUser).Where(p => p.Private == false).ToList();
+                    foundUser.UserPosts = _db.Posts.Where(p => p.Account == foundUser).Where(p => p.IsPrivate == false).ToList();
                 }
 
                 Paginator paginator = new Paginator(foundUser.UserPosts.Count, page, 10);

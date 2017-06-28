@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using curmudgeon.Utilities;
 using curmudgeon.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace curmudgeon.Controllers
 {
@@ -38,6 +39,9 @@ namespace curmudgeon.Controllers
 
         public async Task <IActionResult> Read(string id, int? page)
         {
+            var clientUserId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var clientUser = _db.Users.Where(u => u.Id == clientUserId).Include(u => u.UserPosts).FirstOrDefault();
+
             var tag = _db.Tags.Where(t => t.Title == id.ToString()).FirstOrDefault();
             List<PostTag> postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId).ToList();
             //var postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId);

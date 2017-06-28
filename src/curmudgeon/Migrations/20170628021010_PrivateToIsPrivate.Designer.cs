@@ -8,9 +8,10 @@ using curmudgeon.Models;
 namespace curmudgeon.Migrations
 {
     [DbContext(typeof(CurmudgeonDbContext))]
-    partial class CurmudgeonDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170628021010_PrivateToIsPrivate")]
+    partial class PrivateToIsPrivate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")

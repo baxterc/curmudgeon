@@ -5,6 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script src="~/scripts/jquery-3.2.1.min.js"></script>
+
 <h2>Write a New Post</h2>
 
 @using (Html.BeginForm()){ 
@@ -16,7 +18,31 @@
     <p>Tags(separate with a comma)</p>
     @Html.TextBoxFor(p => p.TagsString)
     <br />
-    <p>Make post private: @Html.CheckBoxFor(p => p.Private)</p>
+    <p>Make post private: @Html.CheckBoxFor(p => p.IsPrivate)</p>
     
 <input type="submit" value="Publish" class="btn btn-default" />
+
+<input type="button" value="Save Draft" class="btn btn-default" id="save-draft" />
 }
+
+<script>
+    $("#save-draft").on("click", function () {
+        var draft = {
+            draftTitle: $("#Title").val(),
+            draftContent: $("#Content").val(),
+            draftTagsString: $("#TagsString").val(),
+            draftIsPrivate: $("#IsPrivate").val()
+        };
+        
+        $.ajax({
+            url: '@Url.Action("SaveDraft", "Posts")',
+            type: 'POST',
+            dataType: 'json',
+            data: draft,
+            success: function (result) {
+                console.log("Success?!");
+                window.location = result.url;
+            }
+        });
+    })
+</script>

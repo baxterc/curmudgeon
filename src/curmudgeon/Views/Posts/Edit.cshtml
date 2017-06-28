@@ -15,7 +15,7 @@
     
     <br />
     @Html.TextAreaFor(p => p.TagsString)
-    <p>Make post private: @Html.CheckBoxFor(p => p.Private)</p>
+    <p>Make post private: @Html.CheckBoxFor(p => p.IsPrivate)</p>
     @Html.HiddenFor(p => p.PostId)
 
     <input type="submit" value="Publish" class="btn btn-default" />
