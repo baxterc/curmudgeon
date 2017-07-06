@@ -27,15 +27,12 @@
 
 <script>
     (function() {
-        thisDraftId = null;
-
         $("#save-draft").on("click", function () {
             var draft = {
                 draftTitle: $("#Title").val(),
                 draftContent: $("#Content").val(),
                 draftTagsString: $("#TagsString").val(),
                 draftIsPrivate: $("#IsPrivate").val(),
-                draftId: thisDraftId
             };
 
             $.ajax({
@@ -46,9 +43,6 @@
                 success: function (result) {
                     console.log("Success?!");
                     console.log(result);
-                    thisDraftId = result.draftId;
-                    
-                    console.log("this draft ID is " + thisDraftId);
                 }
             });
         })

@@ -164,16 +164,22 @@ namespace curmudgeon.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveDraft(string draftTitle, string draftContent, string draftTagsString, bool draftIsPrivate, int? draftId)
+        public async Task<IActionResult> SaveDraft(string draftTitle, string draftContent, string draftTagsString, bool draftIsPrivate)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
-            
-            if (draftId.HasValue)
+            var draftId = "";
+            if (TempData.Count != 0)
+            {
+                draftId = TempData.Peek("DraftPostId").ToString();
+            }
+
+
+            if (draftId != "")
             {
                 Post updatePost = new Post()
                 {
-                    PostId = draftId.Value,
+                    PostId = Int32.Parse(draftId),
                     Account = thisUser,
                     PublishDate = DateTime.UtcNow,
                     DraftDate = DateTime.UtcNow,
@@ -185,7 +191,9 @@ namespace curmudgeon.Controllers
 
                 _db.Entry(updatePost).State = EntityState.Modified;
                 _db.SaveChanges();
-                return Json(new { draftId = updatePost.PostId, draftDate = updatePost.DraftDate });
+                TempData["DraftPostId"] = updatePost.PostId;
+                TempData.Keep("DraftPostId");
+                return Json(new { draftDate = updatePost.DraftDate });
             }
             else
             {
@@ -227,7 +235,9 @@ namespace curmudgeon.Controllers
                 }
 
                 _db.SaveChanges();
-                return Json(new { draftId = newPost.PostId, draftDate = newPost.DraftDate });
+                TempData["DraftPostId"] = newPost.PostId;
+                TempData.Keep("DraftPostId");
+                return Json(new { draftDate = newPost.DraftDate });
             }
         }
 
