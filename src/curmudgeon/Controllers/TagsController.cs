@@ -39,18 +39,22 @@ namespace curmudgeon.Controllers
 
         public async Task <IActionResult> Read(string id, int? page)
         {
-            var clientUserId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var clientUser = _db.Users.Where(u => u.Id == clientUserId).Include(u => u.UserPosts).FirstOrDefault();
+            //Is it necessary to load up the user for this?
+            //var clientUserId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //var clientUser = _db.Users.Where(u => u.Id == clientUserId).Include(u => u.UserPosts).FirstOrDefault();
 
             var tag = _db.Tags.Where(t => t.Title == id.ToString()).FirstOrDefault();
-            List<PostTag> postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId).ToList();
-            //var postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId);
+
+            List<PostTag> postTags = _db.PostTags.Where(pt => pt.TagId == tag.TagId).Include(p => p.Post).Where(p => p.Post.IsPrivate == false && p.Post.IsDraft == false).ToList();
+           
             List<Post> taggedPosts = new List<Post>();
             foreach (PostTag postTag in postTags)
             {
-                int postId = postTag.PostId;
-                var addPost = _db.Posts.Where(p => p.PostId == postId).FirstOrDefault();
-                taggedPosts.Add(addPost);
+                taggedPosts.Add(postTag.Post);
+                /*if (postTag.Post.IsDraft == false && postTag.Post.IsPrivate == false)
+                {
+                    taggedPosts.Add(postTag.Post);
+                }*/
             }
             Paginator paginator = new Paginator(taggedPosts.Count, page, 10);
 
