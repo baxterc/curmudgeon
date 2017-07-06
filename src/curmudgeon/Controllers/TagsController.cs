@@ -54,7 +54,7 @@ namespace curmudgeon.Controllers
             }
             Paginator paginator = new Paginator(taggedPosts.Count, page, 10);
 
-            var paginatedPosts = taggedPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
+            var paginatedPosts = taggedPosts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.PublishDate);
 
             TagsReadViewModel model = new TagsReadViewModel()
             {

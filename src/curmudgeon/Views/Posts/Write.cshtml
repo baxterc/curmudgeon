@@ -26,23 +26,31 @@
 }
 
 <script>
-    $("#save-draft").on("click", function () {
-        var draft = {
-            draftTitle: $("#Title").val(),
-            draftContent: $("#Content").val(),
-            draftTagsString: $("#TagsString").val(),
-            draftIsPrivate: $("#IsPrivate").val()
-        };
-        
-        $.ajax({
-            url: '@Url.Action("SaveDraft", "Posts")',
-            type: 'POST',
-            dataType: 'json',
-            data: draft,
-            success: function (result) {
-                console.log("Success?!");
-                window.location = result.url;
-            }
-        });
-    })
+    (function() {
+        thisDraftId = null;
+
+        $("#save-draft").on("click", function () {
+            var draft = {
+                draftTitle: $("#Title").val(),
+                draftContent: $("#Content").val(),
+                draftTagsString: $("#TagsString").val(),
+                draftIsPrivate: $("#IsPrivate").val(),
+                draftId: thisDraftId
+            };
+
+            $.ajax({
+                url: '@Url.Action("SaveDraft", "Posts")',
+                type: 'POST',
+                dataType: 'json',
+                data: draft,
+                success: function (result) {
+                    console.log("Success?!");
+                    console.log(result);
+                    thisDraftId = result.draftId;
+                    
+                    console.log("this draft ID is " + thisDraftId);
+                }
+            });
+        })
+     })();
 </script>

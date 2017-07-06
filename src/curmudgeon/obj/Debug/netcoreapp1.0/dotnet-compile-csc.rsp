@@ -213,6 +213,8 @@
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170623031242_AddDraftFlag.Designer.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170628021010_PrivateToIsPrivate.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170628021010_PrivateToIsPrivate.Designer.cs"
+"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170629021548_DraftDateForPosts.cs"
+"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\20170629021548_DraftDateForPosts.Designer.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\CurmudgeonDbContextModelSnapshot.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\TestDb\20170407185229_TestDB.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Migrations\TestDb\20170407185229_TestDB.Designer.cs"

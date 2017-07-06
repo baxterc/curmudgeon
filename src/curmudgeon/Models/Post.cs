@@ -14,9 +14,10 @@ namespace curmudgeon.Models
         public int PostId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime PublishDate { get; set; }
         public bool IsPrivate { get; set; }
         public bool IsDraft { get; set; }
+        public DateTime DraftDate { get; set; }
         public virtual ICollection<PostTag> PostTags { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ApplicationUser Account { get; set; } 
@@ -25,7 +26,7 @@ namespace curmudgeon.Models
         {
             Title = title;
             Content = content;
-            Date = date;
+            PublishDate = date;
         }
 
         public Post()

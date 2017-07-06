@@ -36,7 +36,7 @@ namespace curmudgeon.Controllers
 
             Paginator paginator = new Paginator(posts.Count, page, 10);
 
-            var paginatedPosts = posts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
+            var paginatedPosts = posts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.PublishDate);
 
             PostsIndexViewModel model = new PostsIndexViewModel()
             {
@@ -55,7 +55,7 @@ namespace curmudgeon.Controllers
 
             Paginator paginator = new Paginator(drafts.Count, page, 10);
 
-            var paginatedPosts = drafts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.Date);
+            var paginatedPosts = drafts.Skip((paginator.CurrentPage - 1) * paginator.PageLength).Take(paginator.PageLength).OrderBy(p => p.PublishDate);
 
             PostsIndexViewModel model = new PostsIndexViewModel()
             {
@@ -129,8 +129,9 @@ namespace curmudgeon.Controllers
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
             newPost.Account = thisUser;
-            newPost.Date = DateTime.Today;
+            newPost.PublishDate = DateTime.Today;
             Post savePost = WritePostViewModel.WritePostConvert(newPost);
+
             _db.Posts.Add(savePost);
             string tagsString = newPost.TagsString;
             string[] tags = tagsString.Split(',');
@@ -163,48 +164,71 @@ namespace curmudgeon.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveDraft(string draftTitle, string draftContent, string draftTagsString, bool draftIsPrivate)
+        public async Task<IActionResult> SaveDraft(string draftTitle, string draftContent, string draftTagsString, bool draftIsPrivate, int? draftId)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
-            Post newPost = new Models.Post()
-            {
-                Account = thisUser,
-                Date = DateTime.Today,
-                Title = draftTitle,
-                Content = draftContent,
-                IsPrivate = draftIsPrivate,
-                IsDraft = true
-            };
-            _db.Posts.Add(newPost);
             
-            string[] tags = draftTagsString.Split(',');
-
-            foreach (string s in tags)
+            if (draftId.HasValue)
             {
-                if (_db.Tags.Any(t => t.Title == s))
+                Post updatePost = new Post()
                 {
-                    PostTag newPostTag = new PostTag();
-                    Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
-                    newPostTag.PostId = newPost.PostId;
-                    newPostTag.TagId = foundTag.TagId;
-                    _db.PostTags.Add(newPostTag);
-                    Console.WriteLine("DB contains this tag");
-                }
-                else
-                {
-                    PostTag newPostTag = new PostTag();
-                    Console.WriteLine("DB does not contain this tag");
-                    Tag newTag = new Tag(s);
-                    _db.Tags.Add(newTag);
-                    newPostTag.PostId = newPost.PostId;
-                    newPostTag.TagId = newTag.TagId;
-                    _db.PostTags.Add(newPostTag);
-                }
-            }
+                    PostId = draftId.Value,
+                    Account = thisUser,
+                    PublishDate = DateTime.UtcNow,
+                    DraftDate = DateTime.UtcNow,
+                    Title = draftTitle,
+                    Content = draftContent,
+                    IsPrivate = draftIsPrivate,
+                    IsDraft = true
+                };
 
-            _db.SaveChanges();
-            return Json(new { url = Url.Action("Index", "Posts") });
+                _db.Entry(updatePost).State = EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { draftId = updatePost.PostId, draftDate = updatePost.DraftDate });
+            }
+            else
+            {
+                Post newPost = new Post()
+                {
+                    Account = thisUser,
+                    PublishDate = DateTime.Today,
+                    DraftDate = DateTime.UtcNow,
+                    Title = draftTitle,
+                    Content = draftContent,
+                    IsPrivate = draftIsPrivate,
+                    IsDraft = true
+                };
+                _db.Posts.Add(newPost);
+
+                string[] tags = draftTagsString.Split(',');
+
+                foreach (string s in tags)
+                {
+                    if (_db.Tags.Any(t => t.Title == s))
+                    {
+                        PostTag newPostTag = new PostTag();
+                        Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
+                        newPostTag.PostId = newPost.PostId;
+                        newPostTag.TagId = foundTag.TagId;
+                        _db.PostTags.Add(newPostTag);
+                        Console.WriteLine("DB contains this tag");
+                    }
+                    else
+                    {
+                        PostTag newPostTag = new PostTag();
+                        Console.WriteLine("DB does not contain this tag");
+                        Tag newTag = new Tag(s);
+                        _db.Tags.Add(newTag);
+                        newPostTag.PostId = newPost.PostId;
+                        newPostTag.TagId = newTag.TagId;
+                        _db.PostTags.Add(newPostTag);
+                    }
+                }
+
+                _db.SaveChanges();
+                return Json(new { draftId = newPost.PostId, draftDate = newPost.DraftDate });
+            }
         }
 
         public IActionResult Edit(int id)
@@ -265,10 +289,10 @@ namespace curmudgeon.Controllers
 
             // Converts the viewmodel's post content into a Post object that can be saved later on.
             Post savePost = WritePostViewModel.WritePostConvert(editPost);
-            string userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            string originalPostUserId = TempData.Peek("AccountId").ToString();
 
             //check to see if the user making the POST request is the same as the owner of the post being edited
+            string userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            string originalPostUserId = TempData.Peek("AccountId").ToString();
             if (userId == originalPostUserId)
             {
                 //Check to see if the tags string assembled from the initial post is different from what was submitted

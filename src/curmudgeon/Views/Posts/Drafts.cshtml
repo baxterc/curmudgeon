@@ -1,10 +1,10 @@
 ﻿@model curmudgeon.ViewModels.PostsIndexViewModel
 @{
-    ViewData["Title"] = "Your Draftts";
+    ViewData["Title"] = "Your Drafts";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Your Posts</h2>
+<h2>Your Drafts</h2>
 
 <ul id="posts">
     @foreach (var post in Model.Posts)
@@ -22,23 +22,23 @@
                 <a href="~/Posts/">First</a>
             </li>
             <li>
-                <a href="~/Posts?page=@(Model.Paginator.CurrentPage - 1)">Previous</a>
+                <a href="~/Posts/Drafts?page=@(Model.Paginator.CurrentPage - 1)">Previous</a>
             </li>
         }
 
         @for (var page = Model.Paginator.StartPage; page <= Model.Paginator.EndPage; page++)
         {
             <li class="@(page == Model.Paginator.CurrentPage ? "active" : "")">
-                <a href="~/Posts?page=@page">@page</a>
+                <a href="~/Posts/Drafts?page=@page">@page</a>
             </li>    }
 
         @if (Model.Paginator.CurrentPage < Model.Paginator.TotalPages)
         {
             <li>
-                <a href="~/Posts?page=@(Model.Paginator.CurrentPage + 1)">Next</a>
+                <a href="~/Posts/Drafts?page=@(Model.Paginator.CurrentPage + 1)">Next</a>
             </li>
             <li>
-                <a href="~/Posts?page=@(Model.Paginator.TotalPages)">Last</a>
+                <a href="~/Posts/Drafts?page=@(Model.Paginator.TotalPages)">Last</a>
             </li>
         }
     </ul>
