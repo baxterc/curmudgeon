@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="~/scripts/jquery-3.2.1.min.js"></script>
+
 
 <h2>Write a New Post</h2>
 
@@ -26,7 +26,8 @@
 }
 
 <script>
-    (function() {
+    (function () {
+        @{ var draftId = TempData["DraftPostId"];}
         $("#save-draft").on("click", function () {
             var draft = {
                 draftTitle: $("#Title").val(),

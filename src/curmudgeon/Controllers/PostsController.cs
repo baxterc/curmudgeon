@@ -168,10 +168,11 @@ namespace curmudgeon.Controllers
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
-            var draftId = "";
-            if (TempData.Count != 0)
+            var tempDraftData = TempData["DraftPostId"];
+            string draftId ="";
+            if (tempDraftData != null)
             {
-                draftId = TempData.Peek("DraftPostId").ToString();
+                draftId = tempDraftData.ToString();
             }
 
 
@@ -192,7 +193,7 @@ namespace curmudgeon.Controllers
                 _db.Entry(updatePost).State = EntityState.Modified;
                 _db.SaveChanges();
                 TempData["DraftPostId"] = updatePost.PostId;
-                TempData.Keep("DraftPostId");
+                //TempData.Keep("DraftPostId");
                 return Json(new { draftDate = updatePost.DraftDate });
             }
             else
@@ -209,34 +210,39 @@ namespace curmudgeon.Controllers
                 };
                 _db.Posts.Add(newPost);
 
-                string[] tags = draftTagsString.Split(',');
-
-                foreach (string s in tags)
+                if (draftTagsString != "" && draftTagsString != null)
                 {
-                    if (_db.Tags.Any(t => t.Title == s))
+
+                    string[] tags = draftTagsString.Split(',');
+
+                    foreach (string s in tags)
                     {
-                        PostTag newPostTag = new PostTag();
-                        Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
-                        newPostTag.PostId = newPost.PostId;
-                        newPostTag.TagId = foundTag.TagId;
-                        _db.PostTags.Add(newPostTag);
-                        Console.WriteLine("DB contains this tag");
-                    }
-                    else
-                    {
-                        PostTag newPostTag = new PostTag();
-                        Console.WriteLine("DB does not contain this tag");
-                        Tag newTag = new Tag(s);
-                        _db.Tags.Add(newTag);
-                        newPostTag.PostId = newPost.PostId;
-                        newPostTag.TagId = newTag.TagId;
-                        _db.PostTags.Add(newPostTag);
+                        if (_db.Tags.Any(t => t.Title == s))
+                        {
+                            PostTag newPostTag = new PostTag();
+                            Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
+                            newPostTag.PostId = newPost.PostId;
+                            newPostTag.TagId = foundTag.TagId;
+                            _db.PostTags.Add(newPostTag);
+                            Console.WriteLine("DB contains this tag");
+                        }
+                        else
+                        {
+                            PostTag newPostTag = new PostTag();
+                            Console.WriteLine("DB does not contain this tag");
+                            Tag newTag = new Tag(s);
+                            _db.Tags.Add(newTag);
+                            newPostTag.PostId = newPost.PostId;
+                            newPostTag.TagId = newTag.TagId;
+                            _db.PostTags.Add(newPostTag);
+                        }
                     }
                 }
 
+
                 _db.SaveChanges();
                 TempData["DraftPostId"] = newPost.PostId;
-                TempData.Keep("DraftPostId");
+                //TempData.Keep("DraftPostId");
                 return Json(new { draftDate = newPost.DraftDate });
             }
         }
@@ -273,10 +279,10 @@ namespace curmudgeon.Controllers
                 WritePostViewModel editPost = new WritePostViewModel(thisPost, thisPostTagsString);
 
                 TempData["PostTagsString"] = thisPostTagsString;
-                TempData.Keep("PostTagsString");
+                //TempData.Keep("PostTagsString");
 
                 TempData["AccountId"] = thisPost.Account.Id;
-                TempData.Keep("AccountId");
+                //TempData.Keep("AccountId");
 
                 return View(editPost);
             }
@@ -292,9 +298,9 @@ namespace curmudgeon.Controllers
         {
             
             string initialTagsString = "";
-            if (TempData.Peek("PostTagsString").ToString() != null)
+            if (TempData["PostTagsString"].ToString() != null)
             {
-                initialTagsString = TempData.Peek("PostTagsString").ToString();
+                initialTagsString = TempData["PostTagsString"].ToString();
             }
 
             // Converts the viewmodel's post content into a Post object that can be saved later on.
@@ -302,7 +308,7 @@ namespace curmudgeon.Controllers
 
             //check to see if the user making the POST request is the same as the owner of the post being edited
             string userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            string originalPostUserId = TempData.Peek("AccountId").ToString();
+            string originalPostUserId = TempData["AccountId"].ToString();
             if (userId == originalPostUserId)
             {
                 //Check to see if the tags string assembled from the initial post is different from what was submitted
@@ -370,7 +376,6 @@ namespace curmudgeon.Controllers
                     }
                 }
 
-
                 //Save changes to the actual post
                 _db.Entry(savePost).State = EntityState.Modified;
                 _db.SaveChanges();
@@ -397,14 +402,6 @@ namespace curmudgeon.Controllers
                 .Include(p => p.Comments)
                 .Include(p => p.PostTags)
                 .FirstOrDefault();
-            //Delete the PostTag join entries for this particular Post
-            //var thisPostTags = _db.PostTags.Where(pt => pt.PostId == id);
-            /*
-            foreach (PostTag postTag in thisPostTags)
-            {
-                _db.PostTags.Remove(postTag);
-            }
-            */
             _db.Comments.RemoveRange(thisPost.Comments);
             _db.PostTags.RemoveRange(thisPost.PostTags);
             _db.Posts.Remove(thisPost);

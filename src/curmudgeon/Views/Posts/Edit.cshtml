@@ -16,9 +16,41 @@
     <br />
     @Html.TextAreaFor(p => p.TagsString)
     <p>Make post private: @Html.CheckBoxFor(p => p.IsPrivate)</p>
-    @Html.HiddenFor(p => p.PostId)
+    
+    <p id="draft-info" style="display:none">Draft last saved at <span id="draft-time"></span></p>
 
     <input type="submit" value="Publish" class="btn btn-default" />
+    <input type="button" value="Save Draft" class="btn btn-default" id="save-draft" />
 }
 <br />
 <input type="button" value="Cancel" onclick="location.href='/Posts/'" />
+
+<script>
+    (function () {
+        @{ var draftId = TempData["DraftPostId"];}
+        
+        $("#save-draft").on("click", function () {
+            var draft = {
+                draftTitle: $("#Title").val(),
+                draftContent: $("#Content").val(),
+                draftTagsString: $("#TagsString").val(),
+                draftIsPrivate: $("#IsPrivate").val(),
+            };
+
+            $.ajax({
+                url: '@Url.Action("SaveDraft", "Posts")',
+                type: 'POST',
+                dataType: 'json',
+                data: draft,
+                success: function (result) {
+                    console.log("Success?!");
+                    console.log(result);
+                    var draftTime = result.draftTme;
+                    $("#draft-info").show();
+                    $("#draft-time").text(draftTime);
+                }
+                
+            });
+        })
+    })();
+</script>

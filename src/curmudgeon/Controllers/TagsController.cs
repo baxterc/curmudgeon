@@ -30,13 +30,6 @@ namespace curmudgeon.Controllers
             return View();
         }
 
-        /*
-        public IActionResult Index(string id)
-        {
-            return RedirectToAction("Read", id);
-        }
-        */
-
         public async Task <IActionResult> Read(string id, int? page)
         {
             //Is it necessary to load up the user for this?
