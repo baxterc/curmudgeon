@@ -8,9 +8,10 @@ using curmudgeon.Models;
 namespace curmudgeon.Migrations
 {
     [DbContext(typeof(CurmudgeonDbContext))]
-    partial class CurmudgeonDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170730002539_AddSlug")]
+    partial class AddSlug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")

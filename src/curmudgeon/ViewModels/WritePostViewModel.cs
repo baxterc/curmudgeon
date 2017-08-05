@@ -20,6 +20,7 @@ namespace curmudgeon.ViewModels
             returnPost.PublishDate = viewModel.PublishDate;
             returnPost.PostId = viewModel.PostId;
             returnPost.PostTags = viewModel.PostTags;
+            returnPost.Slug = viewModel.Slug;
             returnPost.Title = viewModel.Title;
             returnPost.IsPrivate = viewModel.IsPrivate;
             return returnPost;
@@ -38,6 +39,7 @@ namespace curmudgeon.ViewModels
             this.PublishDate = post.PublishDate;
             this.PostId = post.PostId;
             this.PostTags = post.PostTags;
+            this.Slug = post.Slug;
             this.Title = post.Title;
             this.TagsString = tagString;
         }

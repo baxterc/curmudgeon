@@ -1,25 +1,26 @@
-﻿
-@model curmudgeon.ViewModels.WritePostViewModel
+﻿@model curmudgeon.ViewModels.WritePostViewModel
 @{
     ViewData["Title"] = "Curmudgeon - Write a New Post";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-
 <h2>Write a New Post</h2>
 
-@using (Html.BeginForm()){ 
+@using (Html.BeginForm())
+{
     @Html.LabelFor(p => p.Title)
     @Html.TextBoxFor(p => p.Title)
     <br />
     @Html.TextBoxFor(p => p.Content)
     <br />
-    <p>Tags(separate with a comma)</p>
+    <p>Add a slug:</p>
+    @Html.TextBoxFor(p => p.Slug)
+    <br />
+
     @Html.TextBoxFor(p => p.TagsString)
     <br />
     <p>Make post private: @Html.CheckBoxFor(p => p.IsPrivate)</p>
-    
+
 <input type="submit" value="Publish" class="btn btn-default" />
 
 <input type="button" value="Save Draft" class="btn btn-default" id="save-draft" />
@@ -27,13 +28,14 @@
 
 <script>
     (function () {
-        @{ var draftId = TempData["DraftPostId"];}
+        
         $("#save-draft").on("click", function () {
             var draft = {
                 draftTitle: $("#Title").val(),
                 draftContent: $("#Content").val(),
                 draftTagsString: $("#TagsString").val(),
                 draftIsPrivate: $("#IsPrivate").val(),
+                draftSlug: $("#Slug").val()
             };
 
             $.ajax({

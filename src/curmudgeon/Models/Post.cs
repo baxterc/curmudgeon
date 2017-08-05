@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.RegularExpressions;
 
 namespace curmudgeon.Models
 {
@@ -13,7 +14,10 @@ namespace curmudgeon.Models
         [Key]
         public int PostId { get; set; }
         public string Title { get; set; }
-        public string Content { get; set; }
+        public string Content { get; set;}
+        [StringLength(64, MinimumLength = 2)]
+        [RegularExpression("[a-z.0-9-]")]
+        public string Slug { get; set; }
         public DateTime PublishDate { get; set; }
         public bool IsPrivate { get; set; }
         public bool IsDraft { get; set; }
@@ -32,6 +36,25 @@ namespace curmudgeon.Models
         public Post()
         {
 
+        }
+
+        public static string SlugConverter(string slug)
+        {
+            slug = slug.ToLower();
+            //TODO: Handle non-Latin and accented letters
+
+            //Replace any non-lowercase alphanumeric, non-whitespace, non-hyphen character with nothing
+            slug = Regex.Replace(slug, @"[^\w\s\p{Pd}]", "", RegexOptions.Compiled);
+            //Replace whitespace of any length or type with a hyphen
+            slug = Regex.Replace(slug, @"\s+", "-");
+            //Enforce maximum length of 64 chars
+            if (slug.Length > 64)
+            {
+                slug = slug.Substring(0, 64);
+            }
+            //Remove leading and ending hyphens
+            slug = slug.Trim('-');
+            return slug;
         }
     }
 }

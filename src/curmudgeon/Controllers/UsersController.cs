@@ -26,8 +26,7 @@ namespace curmudgeon.Controllers
             _signInManager = signInManager;
             _db = db;
         }
-
-        // GET: /<controller>/
+        
         public IActionResult Index()
         {
             return RedirectToAction("Info");

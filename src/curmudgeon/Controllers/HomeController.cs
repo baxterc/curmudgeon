@@ -46,9 +46,9 @@ namespace curmudgeon.Controllers
                 return View();
             }
         }
+
         public async Task<IActionResult> Blogs(string id, int? page)
         {
-
             if (id == null)
             {
                 //Takes the user to their own posts

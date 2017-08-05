@@ -66,6 +66,7 @@ namespace curmudgeon.Controllers
             return View(model);
         }
 
+        //For a user to read one of their own posts
         public IActionResult Read(int id, int? commentpage)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -118,6 +119,18 @@ namespace curmudgeon.Controllers
             return View(readPost);
         }
 
+        //For a user to read another user's post, based on username and URL s slug
+        [HttpGet("blogs/{UserName}/{Slug}")]
+        public async Task<IActionResult> ReadPost(string UserName, string Slug)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var foundUserPost = _db.Users.Where(u => u.UserName == UserName.ToLower()).Include(u => u.UserPosts.Where(p => p.Slug == Slug));
+
+            return View(foundUserPost);
+        }
+
+        [HttpGet]
         public IActionResult Write()
         {
             return View();
@@ -130,6 +143,8 @@ namespace curmudgeon.Controllers
             var thisUser = await _userManager.FindByIdAsync(userId);
             newPost.Account = thisUser;
             newPost.PublishDate = DateTime.Today;
+            Console.WriteLine(Post.SlugConverter(newPost.Title));
+
             Post savePost = WritePostViewModel.WritePostConvert(newPost);
 
             _db.Posts.Add(savePost);
@@ -164,7 +179,7 @@ namespace curmudgeon.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveDraft(string draftTitle, string draftContent, string draftTagsString, bool draftIsPrivate)
+        public async Task<IActionResult> SaveDraft(string draftTitle, string draftContent, string draftTagsString, string draftSlug, bool draftIsPrivate)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
@@ -186,6 +201,7 @@ namespace curmudgeon.Controllers
                     DraftDate = DateTime.UtcNow,
                     Title = draftTitle,
                     Content = draftContent,
+                    Slug = draftSlug,
                     IsPrivate = draftIsPrivate,
                     IsDraft = true
                 };
@@ -205,6 +221,7 @@ namespace curmudgeon.Controllers
                     DraftDate = DateTime.UtcNow,
                     Title = draftTitle,
                     Content = draftContent,
+                    Slug = draftSlug,
                     IsPrivate = draftIsPrivate,
                     IsDraft = true
                 };

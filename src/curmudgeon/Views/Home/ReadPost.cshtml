@@ -1,0 +1,76 @@
+﻿@model curmudgeon.ViewModels.ReadPostViewModel
+@{
+    ViewData["Title"] = "Curmudgeon";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>@Model.ReadPost.Title</h3>
+<div>@Model.ReadPost.Content</div>
+
+<ul id="post_comments">
+    @if (Model.PostComments != null)
+    {
+        @foreach (var comment in Model.PostComments)
+        {
+            <li>@Html.ActionLink(comment.Title, "Details", "Comments", new { id = comment.CommentId })</li>
+        }
+    }
+</ul>
+@if (Model.Paginator != null)
+{
+    @if (Model.Paginator.EndPage > 1)
+    {
+        <ul>
+            @if (Model.Paginator.CurrentPage > 1)
+            {
+                <li>
+                    <a href="~/Posts/Read/@(Model.ReadPost.PostId)">First</a>
+                </li>
+                <li>
+                    <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@(Model.Paginator.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+
+            @for (var page = Model.Paginator.StartPage; page <= Model.Paginator.EndPage; page++)
+            {
+                <li class="@(page == Model.Paginator.CurrentPage ? "active" : "")">
+                    <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@page">@page</a>
+                </li>    }
+
+            @if (Model.Paginator.CurrentPage < Model.Paginator.TotalPages)
+            {
+                <li>
+                    <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@(Model.Paginator.CurrentPage + 1)">Next</a>
+                </li>
+                <li>
+                    <a href="~/Posts/Read/@(Model.ReadPost.PostId)?commentpage=@(Model.Paginator.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+}
+
+
+		
+
+
+    @if (Model.ReadPostTags != null)
+    {
+        <h4>Tagged under:</h4>
+        <ul id="post_tags">
+            @foreach (var tag in Model.ReadPostTags)
+            {
+                <li>@Html.ActionLink(tag.Title, "Read", "Tags", new { id = tag.Title.ToString().ToLower() })</li>
+            }
+        </ul>
+    }
+       
+@if (Model.ReadPost.IsPrivate != true)
+{
+    @Html.ActionLink("Add a Comment", "Write", "Comments", new { id = Model.ReadPost.PostId })
+}
+
+
+@Html.ActionLink("Edit this Post", "Edit", "Posts", new { id = Model.ReadPost.PostId })
+
+@Html.ActionLink("Return to Posts", "Index")

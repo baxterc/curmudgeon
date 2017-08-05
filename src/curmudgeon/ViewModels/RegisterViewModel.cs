@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using curmudgeon.Models;
 
 namespace curmudgeon.ViewModels
 {
-    public class RegisterViewModel
+    public class RegisterViewModel : ApplicationUser
     {
         [Required]
         [EmailAddress]
