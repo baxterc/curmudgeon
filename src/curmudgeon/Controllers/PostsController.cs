@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using curmudgeon.ViewModels;
 using curmudgeon.Utilities;
+using System.Text.RegularExpressions;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -143,7 +144,41 @@ namespace curmudgeon.Controllers
             var thisUser = await _userManager.FindByIdAsync(userId);
             newPost.Account = thisUser;
             newPost.PublishDate = DateTime.Today;
-            Console.WriteLine(Post.SlugConverter(newPost.Title));
+
+            if (newPost.Slug == null)
+            {
+                Console.WriteLine(Post.SlugConverter(newPost.Title));
+                newPost.Slug = Post.SlugConverter(newPost.Title);
+            }
+            else
+            {
+                newPost.Slug = Post.SlugConverter(newPost.Slug);
+            }
+
+            
+
+            //Check if a post already has a Slug that is the same as the new post's slug
+            var matchPost = _db.Posts.Where(p => p.Account == thisUser).FirstOrDefault(p => p.Slug == newPost.Slug);
+            if (matchPost != null)
+            {
+                //Check to see if the last characters of the matched post's slug are an underscore followed by a digit (up to 3 digit repetitions)
+                string matchSlug = matchPost.Slug;
+                string slugEnd = (matchSlug.Substring((matchSlug.Length - 4), 4));
+                Match slugNumber = Regex.Match(slugEnd, @"(?<=_)[[0-9]+.]");
+                if (slugNumber.Success)
+                {
+                    int newSlugNum = int.Parse(slugNumber.ToString());
+                    newSlugNum++;
+                    //Replace the number found after the underscore with the new number
+                    string newSlugEnd = Regex.Replace(slugEnd, @"(?<=_)+.", newSlugNum.ToString(), RegexOptions.Compiled);
+                }
+                else
+                {
+                    matchSlug = matchSlug + "_0";
+                    newPost.Slug = matchSlug;
+                }
+            }
+            
 
             Post savePost = WritePostViewModel.WritePostConvert(newPost);
 
