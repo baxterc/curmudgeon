@@ -47,6 +47,8 @@ namespace curmudgeon.Models
             slug = Regex.Replace(slug, @"[^\w\s\p{Pd}]", "", RegexOptions.Compiled);
             //Replace whitespace of any length or type with a hyphen
             slug = Regex.Replace(slug, @"[\s]+", "-", RegexOptions.Compiled);
+            //Replace underscores that are not at the end of the string and not followed by the number with a hyphen
+            slug = Regex.Replace(slug, @"_^[0-9]+$", "-", RegexOptions.Compiled);
             //Enforce maximum length of 64 chars
             if (slug.Length > 64)
             {
@@ -55,6 +57,18 @@ namespace curmudgeon.Models
             //Remove leading and ending hyphens
             slug = slug.Trim('-');
             return slug;
+        }
+
+        public static string GenerateSlug()
+        {
+            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            string newSlug = "";
+            Random random = new Random();
+            for (int i = 0; i < 6; i++)
+            {
+                newSlug.Append(chars[random.Next(chars.Length)]);
+            }
+            return newSlug;
         }
     }
 }

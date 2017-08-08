@@ -147,65 +147,55 @@ namespace curmudgeon.Controllers
 
             if (newPost.Slug == null)
             {
-                Console.WriteLine(Post.SlugConverter(newPost.Title));
-                newPost.Slug = Post.SlugConverter(newPost.Title);
+                newPost.Slug = Post.GenerateSlug();
             }
             else
             {
-                newPost.Slug = Post.SlugConverter(newPost.Slug);
-            }
+                string newSlug = Post.SlugConverter(newPost.Slug);
+                
+                var foundPostBySlug = _db.Posts.Where(p => p.Account == thisUser).FirstOrDefault(p => p.Slug == newSlug);
 
-            
-
-            //Check if a post already has a Slug that is the same as the new post's slug
-            var matchPost = _db.Posts.Where(p => p.Account == thisUser).FirstOrDefault(p => p.Slug == newPost.Slug);
-            if (matchPost != null)
-            {
-                //Check to see if the last characters of the matched post's slug are an underscore followed by a digit (up to 3 digit repetitions)
-                string matchSlug = matchPost.Slug;
-                string slugEnd = (matchSlug.Substring((matchSlug.Length - 4), 4));
-                Match slugNumber = Regex.Match(slugEnd, @"(?<=_)[[0-9]+.]");
-                if (slugNumber.Success)
+                if (foundPostBySlug != null)
                 {
-                    int newSlugNum = int.Parse(slugNumber.ToString());
-                    newSlugNum++;
-                    //Replace the number found after the underscore with the new number
-                    string newSlugEnd = Regex.Replace(slugEnd, @"(?<=_)+.", newSlugNum.ToString(), RegexOptions.Compiled);
+                    //TODO: Trigger this route via Ajax on the Write view, and handle this error on that end.
+                    return Json(new { slugError = "This slug is already in use" });
                 }
                 else
                 {
-                    matchSlug = matchSlug + "_0";
-                    newPost.Slug = matchSlug;
+                    newPost.Slug = newSlug;
                 }
             }
             
-
             Post savePost = WritePostViewModel.WritePostConvert(newPost);
 
             _db.Posts.Add(savePost);
-            string tagsString = newPost.TagsString;
-            string[] tags = tagsString.Split(',');
 
-            foreach(string s in tags)
-            {
-                if (_db.Tags.Any(t => t.Title == s))
-                    {
-                    PostTag newPostTag = new PostTag();
-                    Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
-                    newPostTag.PostId = savePost.PostId;
-                    newPostTag.TagId = foundTag.TagId;
-                    _db.PostTags.Add(newPostTag);
-                    Console.WriteLine("DB contains this tag");
-                    }
-                else
+            string tagsString = newPost.TagsString;
+            if (tagsString != null)
+            { 
+                string[] tags = tagsString.Split(',');
+
+                foreach(string s in tags)
                 {
-                    PostTag newPostTag = new PostTag();
-                    Console.WriteLine("DB does not contain this tag");
-                    Tag newTag = new Tag(s);
-                    _db.Tags.Add(newTag);
-                    newPostTag.PostId = savePost.PostId;
-                    newPostTag.TagId = newTag.TagId;
-                    _db.PostTags.Add(newPostTag);
+                    if (_db.Tags.Any(t => t.Title == s))
+                        {
+                        PostTag newPostTag = new PostTag();
+                        Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
+                        newPostTag.PostId = savePost.PostId;
+                        newPostTag.TagId = foundTag.TagId;
+                        _db.PostTags.Add(newPostTag);
+                        Console.WriteLine("DB contains this tag");
+                        }
+                    else
+                    {
+                        PostTag newPostTag = new PostTag();
+                        Console.WriteLine("DB does not contain this tag");
+                        Tag newTag = new Tag(s);
+                        _db.Tags.Add(newTag);
+                        newPostTag.PostId = savePost.PostId;
+                        newPostTag.TagId = newTag.TagId;
+                        _db.PostTags.Add(newPostTag);
+                    }
                 }
             }
 
