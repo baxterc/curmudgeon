@@ -147,6 +147,7 @@ namespace curmudgeon.Controllers
 
             if (newPost.Slug == null)
             {
+                //TODO: Account for the (remote) possibility of duplicate slugs being generated randomly
                 newPost.Slug = Post.GenerateSlug();
             }
             else

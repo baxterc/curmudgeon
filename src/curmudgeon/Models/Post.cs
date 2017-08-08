@@ -62,13 +62,14 @@ namespace curmudgeon.Models
         public static string GenerateSlug()
         {
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            string newSlug = "";
+            System.Text.StringBuilder newSlug = new System.Text.StringBuilder();
             Random random = new Random();
             for (int i = 0; i < 6; i++)
             {
-                newSlug.Append(chars[random.Next(chars.Length)]);
+                char nextChar = chars[random.Next(chars.Length)];
+                newSlug.Append(nextChar);
             }
-            return newSlug;
+            return newSlug.ToString();
         }
     }
 }
