@@ -39,14 +39,6 @@ namespace curmudgeon.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _db = db;
-            if (ctx == null)
-            {
-                _ctx = new EFCurmudgeonRepository();
-            }
-            else
-            {
-                _ctx = ctx;
-            }
         }
 
         public async Task <IActionResult> Index()
