@@ -45,10 +45,10 @@ namespace curmudgeon.Models
 
             //Replace any non-lowercase alphanumeric, non-whitespace, non-hyphen character with nothing
             slug = Regex.Replace(slug, @"[^\w\s\p{Pd}]", "", RegexOptions.Compiled);
-            //Replace whitespace of any length or type with a hyphen
-            slug = Regex.Replace(slug, @"[\s]+", "-", RegexOptions.Compiled);
-            //Replace underscores that are not at the end of the string and not followed by the number with a hyphen
-            slug = Regex.Replace(slug, @"_^[0-9]+$", "-", RegexOptions.Compiled);
+            //Replace whitespace and underscores of any length or type with a hyphen
+            slug = Regex.Replace(slug, @"[\s_]+", "-", RegexOptions.Compiled);
+            //Replace underscores that are not at the end of the string and not followed by a number with a hyphen -- deprecated
+            //slug = Regex.Replace(slug, @"_^[0-9]+$", "-", RegexOptions.Compiled);
             //Enforce maximum length of 64 chars
             if (slug.Length > 64)
             {

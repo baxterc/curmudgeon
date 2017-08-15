@@ -178,20 +178,19 @@ namespace curmudgeon.Controllers
 
                 foreach(string s in tags)
                 {
-                    if (_db.Tags.Any(t => t.Title == s))
+                    string slugTag = Post.SlugConverter(s);
+                    if (_db.Tags.Any(t => t.Title == slugTag))
                         {
                         PostTag newPostTag = new PostTag();
                         Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
                         newPostTag.PostId = savePost.PostId;
                         newPostTag.TagId = foundTag.TagId;
                         _db.PostTags.Add(newPostTag);
-                        Console.WriteLine("DB contains this tag");
                         }
                     else
                     {
                         PostTag newPostTag = new PostTag();
-                        Console.WriteLine("DB does not contain this tag");
-                        Tag newTag = new Tag(s);
+                        Tag newTag = new Tag(slugTag);
                         _db.Tags.Add(newTag);
                         newPostTag.PostId = savePost.PostId;
                         newPostTag.TagId = newTag.TagId;
