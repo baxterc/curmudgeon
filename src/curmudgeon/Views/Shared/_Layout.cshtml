@@ -7,6 +7,7 @@
 </head>
 <body>
     <nav>
+        curmudgeon |    
         @if (User.Identity.IsAuthenticated)
         {@Html.ActionLink("Log Out", "LogOff", "Users")} | <a href="~/Posts">View your Posts</a>
     </nav>

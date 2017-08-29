@@ -67,7 +67,9 @@ namespace curmudgeon.Controllers
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var thisUser = await _userManager.FindByIdAsync(userId);
-            var result = await _userManager.UpdateAsync(model);
+            thisUser.DisplayName = model.DisplayName;
+            thisUser.UserColors = model.UserColors;
+            var result = await _userManager.UpdateAsync(thisUser);
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");

@@ -15,7 +15,7 @@ namespace curmudgeon.Models
         
         public string Nickname { get; set; }
         public string DisplayName { get; set; }
-        
+        public string UserColors { get; set; }
         public virtual ICollection<Post> UserPosts { get; set; }
         public virtual ICollection<Comment> UserComments { get; set; }
         [InverseProperty("Follower")]
