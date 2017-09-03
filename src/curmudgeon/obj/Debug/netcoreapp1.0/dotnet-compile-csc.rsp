@@ -192,6 +192,7 @@
 -resource:"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\obj\Debug\netcoreapp1.0\curmudgeondotnet-compile.deps.json",curmudgeon.deps.json
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Program.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Startup.cs"
+"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Components\TopNavBarComponent.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Controllers\CommentsController.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Controllers\HomeController.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\Controllers\PostsController.cs"
@@ -241,5 +242,6 @@
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\ReadPostViewModel.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\RegisterViewModel.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\TagsReadViewModel.cs"
+"C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\TopNavBarViewModel.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\UserBlogsViewModel.cs"
 "C:\Users\Charlie\Desktop\curmudgeon\src\curmudgeon\ViewModels\WritePostViewModel.cs"

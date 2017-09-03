@@ -12,6 +12,7 @@ namespace curmudgeon.ViewModels
         public IEnumerable<Post> Posts { get; set; }
         public string Nickname { get; set; }
         public string DisplayName { get; set; }
+        public string UserColors { get; set; }
         public Paginator Paginator { get; set; }
 
         public static UserBlogsViewModel UserConvertBlogViewModel(ApplicationUser user, IEnumerable<Post> posts, Paginator paginator)

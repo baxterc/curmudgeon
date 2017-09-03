@@ -1,0 +1,44 @@
+﻿@model curmudgeon.ViewModels.TopNavBarViewModel
+
+<nav id="top-navbar">
+        curmudgeon |
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            @Html.ActionLink("Log Out", "LogOff", "Users") @:| <a href="/Posts"> View your Posts</a> | Welcome, @Model.DisplayName | 
+            <span id="icon-container"><svg id="user-icon" viewBox="0 0 3 3"></svg></span>
+
+        }
+        @if (User.Identity.IsAuthenticated == false)
+        {@Html.ActionLink("Log In", "LogIn", "Users")}
+
+</nav>
+
+<script>
+    var colorArray = String('@Model.UserColors').split(',');
+    console.log(colorArray);
+    var userIcon = document.getElementById("user-icon");
+    
+    for (i = 0; i <= 8; i++)
+    {
+        
+        var newRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        newRect.setAttribute("x", Math.floor(i/3));
+        newRect.setAttribute("y", i % 3);
+        newRect.setAttribute("height", 1);
+        newRect.setAttribute("width", 1);
+        newRect.setAttribute("style", "fill: " + colorArray[i]);
+        userIcon.appendChild(newRect);
+    }
+    
+</script>
+
+<style>
+    #top-navbar {
+        height: 30px;
+    }
+    #user-icon{
+        vertical-align: middle;
+        height: 18px;
+    }
+</style>

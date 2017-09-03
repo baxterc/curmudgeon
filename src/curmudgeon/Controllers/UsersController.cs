@@ -112,5 +112,11 @@ namespace curmudgeon.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public async Task<PartialViewResult> UserIcon()
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var thisUser = await _userManager.FindByIdAsync(userId);
+            return PartialView(thisUser);
+        }
     }
 }

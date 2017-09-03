@@ -14,6 +14,7 @@ using curmudgeon.Utilities;
 
 namespace curmudgeon.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly CurmudgeonDbContext _db;
@@ -26,7 +27,6 @@ namespace curmudgeon.Controllers
             _signInManager = signInManager;
             _db = db;
         }
-
         // GET: /<controller>/
         public IActionResult Index()
         {

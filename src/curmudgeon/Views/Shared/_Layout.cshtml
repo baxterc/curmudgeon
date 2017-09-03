@@ -6,11 +6,8 @@
     <title>@ViewBag.Title</title>
 </head>
 <body>
-    <nav>
-        curmudgeon |    
-        @if (User.Identity.IsAuthenticated)
-        {@Html.ActionLink("Log Out", "LogOff", "Users")} | <a href="~/Posts">View your Posts</a>
-    </nav>
+    @await Component.InvokeAsync(nameof(curmudgeon.Components.TopNavBarComponent))
+
     <div>
         @RenderBody()
     </div>

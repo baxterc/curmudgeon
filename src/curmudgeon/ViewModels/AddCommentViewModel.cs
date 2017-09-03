@@ -8,6 +8,6 @@ namespace curmudgeon.ViewModels
 {
     public class AddCommentViewModel
     {
-        public Post commentPost { get; set; }
+        public Post CommentPost { get; set; }
     }
 }
