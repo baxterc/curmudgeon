@@ -11,13 +11,13 @@
     @Html.LabelFor(p => p.Title)
     @Html.TextBoxFor(p => p.Title)
     <br />
-    @Html.TextBoxFor(p => p.Content)
+    @Html.TextAreaFor(p => p.Content)
     <br />
     <p>Add a slug:</p>
-    @Html.TextBoxFor(p => p.Slug)
+    @Html.TextAreaFor(p => p.Slug)
     <br />
 
-    @Html.TextBoxFor(p => p.TagsString)
+    @Html.TextAreaFor(p => p.TagsString)
     <br />
     <p>Make post private: @Html.CheckBoxFor(p => p.IsPrivate)</p>
 

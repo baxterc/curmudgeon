@@ -1,16 +1,19 @@
 ﻿@model curmudgeon.ViewModels.TopNavBarViewModel
 
 <nav id="top-navbar">
-        curmudgeon |
+        <span id="main-logo-text">Ludd.ly</span>
 
+
+    <span id="top-navbar-options">
         @if (User.Identity.IsAuthenticated)
         {
-            @Html.ActionLink("Log Out", "LogOff", "Users") @:| <a href="/Posts"> View your Posts</a> | Welcome, @Model.DisplayName | 
+            @Html.ActionLink("Log Out", "LogOff", "Users") @:| <a href="/Posts"> View your Posts</a> | Welcome, @Model.DisplayName |
             <span id="icon-container"><svg id="user-icon" viewBox="0 0 3 3"></svg></span>
 
         }
         @if (User.Identity.IsAuthenticated == false)
         {@Html.ActionLink("Log In", "LogIn", "Users")}
+    </span>
 
 </nav>
 
@@ -34,11 +37,40 @@
 </script>
 
 <style>
-    #top-navbar {
-        height: 30px;
+    body {
+        background: #364740;
+        color: #EFF9F0;
+        font-family: 'Chivo', sans-serif;
     }
+
+    a {
+        color: #66FFEA;
+    }
+
+    a:visited {
+        color: #623CEA;
+    }
+
+    #main-logo-text{
+        font-family: 'Vesper Libre', serif;
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    #top-navbar {
+        height: 32px;
+        background: #011627;
+    }
+
+    #top-navbar-options {
+        float: right;
+        vertical-align: middle;
+    }
+
     #user-icon{
         vertical-align: middle;
         height: 18px;
+        border: 1px solid black;
+        shape-rendering: crispEdges;
     }
 </style>

@@ -5,7 +5,7 @@
 }
 
 <h3>@Model.ReadPost.Title</h3>
-<div>@Model.ReadPost.Content</div>
+<div>@Html.Raw(Model.ReadPost.Content)</div>
 
 <ul id="post_comments">
     @if (Model.PostComments != null)

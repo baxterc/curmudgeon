@@ -71,5 +71,14 @@ namespace curmudgeon.Models
             }
             return newSlug.ToString();
         }
+
+        //Takes a Post's Content from the DB and adds appropriate HTML tags for line breaks
+        public static string PostContentParser(string postContent)
+        {
+            postContent = postContent.Insert(0, "<p>");
+            postContent = postContent.Replace("\r\n", "<br/>").Replace("\n", "<br/>").Replace("<br/><br/>", "</p><p>");
+            postContent = postContent.Insert(postContent.Length, "</p>");
+            return postContent;
+        }
     }
 }

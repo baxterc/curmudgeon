@@ -79,6 +79,8 @@ namespace curmudgeon.Controllers
                 .Include(p => p.Account)
                 .FirstOrDefault();
 
+            thisPost.Content = Post.PostContentParser(thisPost.Content);
+
             if (thisPost.Account.Id != userId && thisPost.IsPrivate == true)
             {
                 Post privatePost = new Post()
