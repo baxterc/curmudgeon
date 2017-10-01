@@ -10,8 +10,6 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using curmudgeon.Utilities;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace curmudgeon.Controllers
 {
 

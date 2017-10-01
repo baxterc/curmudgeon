@@ -56,6 +56,18 @@ namespace curmudgeon.Models
             }
             //Remove leading and ending hyphens
             slug = slug.Trim('-');
+
+            //If the slug is null or all hypens, create a random slug
+
+            if (slug == null || slug == "")
+            {
+                slug = Post.GenerateSlug();
+                return slug;
+            } else if (Regex.IsMatch(slug, @"^-*$"))
+            {
+                slug = Post.GenerateSlug();
+                return slug;
+            }
             return slug;
         }
 

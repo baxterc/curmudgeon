@@ -17,6 +17,8 @@
 
 </nav>
 
+@if (Model != null)
+{
 <script>
     var colorArray = String('@Model.UserColors').split(',');
     console.log(colorArray);
@@ -35,6 +37,7 @@
     }
     
 </script>
+}
 
 <style>
     body {
