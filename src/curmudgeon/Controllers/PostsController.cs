@@ -154,7 +154,7 @@ namespace curmudgeon.Controllers
             }
             else
             {
-                string newSlug = Post.SlugConverter(newPost.Slug);
+                string newSlug = Post.Sluggify(newPost.Slug);
                 
                 var foundPostBySlug = _db.Posts.Where(p => p.Account == thisUser).FirstOrDefault(p => p.Slug == newSlug);
 
@@ -180,23 +180,26 @@ namespace curmudgeon.Controllers
 
                 foreach(string s in tags)
                 {
-                    string slugTag = Post.SlugConverter(s);
-                    if (_db.Tags.Any(t => t.Title == slugTag))
-                        {
-                        PostTag newPostTag = new PostTag();
-                        Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
-                        newPostTag.PostId = savePost.PostId;
-                        newPostTag.TagId = foundTag.TagId;
-                        _db.PostTags.Add(newPostTag);
-                        }
-                    else
+                    string slugTag = Tag.Sluggify(s);
+                    if (slugTag != null)
                     {
-                        PostTag newPostTag = new PostTag();
-                        Tag newTag = new Tag(slugTag);
-                        _db.Tags.Add(newTag);
-                        newPostTag.PostId = savePost.PostId;
-                        newPostTag.TagId = newTag.TagId;
-                        _db.PostTags.Add(newPostTag);
+                        if (_db.Tags.Any(t => t.Title == slugTag))
+                        {
+                            PostTag newPostTag = new PostTag();
+                            Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
+                            newPostTag.PostId = savePost.PostId;
+                            newPostTag.TagId = foundTag.TagId;
+                            _db.PostTags.Add(newPostTag);
+                        }
+                        else
+                        {
+                            PostTag newPostTag = new PostTag();
+                            Tag newTag = new Tag(slugTag);
+                            _db.Tags.Add(newTag);
+                            newPostTag.PostId = savePost.PostId;
+                            newPostTag.TagId = newTag.TagId;
+                            _db.PostTags.Add(newPostTag);
+                        }
                     }
                 }
             }
@@ -261,29 +264,31 @@ namespace curmudgeon.Controllers
 
                     foreach (string s in tags)
                     {
-                        if (_db.Tags.Any(t => t.Title == s))
+                        string slugTag = Tag.Sluggify(s);
+                        if (slugTag != null)
                         {
-                            PostTag newPostTag = new PostTag();
-                            Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == s);
-                            newPostTag.PostId = newPost.PostId;
-                            newPostTag.TagId = foundTag.TagId;
-                            _db.PostTags.Add(newPostTag);
-                            Console.WriteLine("DB contains this tag");
-                        }
-                        else
-                        {
-                            PostTag newPostTag = new PostTag();
-                            Console.WriteLine("DB does not contain this tag");
-                            Tag newTag = new Tag(s);
-                            _db.Tags.Add(newTag);
-                            newPostTag.PostId = newPost.PostId;
-                            newPostTag.TagId = newTag.TagId;
-                            _db.PostTags.Add(newPostTag);
+                            if (_db.Tags.Any(t => t.Title == slugTag))
+                            {
+                                PostTag newPostTag = new PostTag();
+                                Tag foundTag = _db.Tags.FirstOrDefault(t => t.Title == slugTag);
+                                newPostTag.PostId = newPost.PostId;
+                                newPostTag.TagId = foundTag.TagId;
+                                _db.PostTags.Add(newPostTag);
+                                Console.WriteLine("DB contains this tag");
+                            }
+                            else
+                            {
+                                PostTag newPostTag = new PostTag();
+                                Console.WriteLine("DB does not contain this tag");
+                                Tag newTag = new Tag(s);
+                                _db.Tags.Add(newTag);
+                                newPostTag.PostId = newPost.PostId;
+                                newPostTag.TagId = newTag.TagId;
+                                _db.PostTags.Add(newPostTag);
+                            }
                         }
                     }
                 }
-
-
                 _db.SaveChanges();
                 TempData["DraftPostId"] = newPost.PostId;
                 //TempData.Keep("DraftPostId");
@@ -380,31 +385,35 @@ namespace curmudgeon.Controllers
 
                     List<Tag> FoundTags = new List<Tag>();
 
-                    foreach (string tagString in tagsSplitString)
+                    foreach (string s in tagsSplitString)
                     {
-                        Tag foundTag = _db.Tags.Where(t => t.Title == tagString).FirstOrDefault();
-                        //Add the tag to the DB if it does not already exist; if it doesn't exist it's implied that a new PostTag entry should be made
-                        if (foundTag == null)
+                        string tagString = Tag.Sluggify(s);
+                        if (tagString != null)
                         {
-                            PostTag newPostTag = new PostTag();
-                            Tag newTag = new Tag(tagString);
-                            _db.Tags.Add(newTag);
-                            newPostTag.PostId = savePost.PostId;
-                            newPostTag.TagId = newTag.TagId;
-                            _db.PostTags.Add(newPostTag);
-                        }
-                        //If the tag already exists...
-                        else
-                        {
-                            //...Make a new PostTag entry if there isn't already one. i.e. if the PostTags for this post do not contain an entry with this tag ID, make a new entry
-                            if (!TagsForThisPost.Contains(foundTag))
+                            Tag foundTag = _db.Tags.Where(t => t.Title == tagString).FirstOrDefault();
+                            //Add the tag to the DB if it does not already exist; if it doesn't exist it's implied that a new PostTag entry should be made
+                            if (foundTag == null)
                             {
                                 PostTag newPostTag = new PostTag();
-                                newPostTag.Post = savePost;
-                                newPostTag.Tag = foundTag;
+                                Tag newTag = new Tag(tagString);
+                                _db.Tags.Add(newTag);
+                                newPostTag.PostId = savePost.PostId;
+                                newPostTag.TagId = newTag.TagId;
                                 _db.PostTags.Add(newPostTag);
                             }
-                            // loop breaks if the tag already exists and is found in the post's tags.
+                            //If the tag already exists...
+                            else
+                            {
+                                //...Make a new PostTag entry if there isn't already one. i.e. if the PostTags for this post do not contain an entry with this tag ID, make a new entry
+                                if (!TagsForThisPost.Contains(foundTag))
+                                {
+                                    PostTag newPostTag = new PostTag();
+                                    newPostTag.Post = savePost;
+                                    newPostTag.Tag = foundTag;
+                                    _db.PostTags.Add(newPostTag);
+                                }
+                                // loop breaks if the tag already exists and is found in the post's tags.
+                            }
                         }
                     }
 

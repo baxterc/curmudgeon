@@ -38,7 +38,7 @@ namespace curmudgeon.Models
 
         }
 
-        public static string SlugConverter(string slug)
+        public static string Sluggify(string slug)
         {
             slug = slug.ToLower();
             //TODO: Handle non-Latin and accented letters
